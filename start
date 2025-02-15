@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+</html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="Swings points balance" content="" />
+        <title>COMP 333: Software Engineering Swings Points</title>
+        <link rel="stylesheet" href="CSScode.css" />
+    </head>
+        <body>
+            <h1>
+                TEST
+            </h1>
+            <p>This is a paragraph for testing
+                This website will be about budgeting swings points
+            </p>
+
+        </body>
+</html>
