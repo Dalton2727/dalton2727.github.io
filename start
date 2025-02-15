@@ -6,6 +6,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta name="Swings points balance" content="" />
         <title>COMP 333: Software Engineering Swings Points</title>
+        <link rel="stylesheet" href="CSScode.css" />
+    </head>
         <body>
             <h1>
                 TEST
@@ -15,6 +17,4 @@
             </p>
 
         </body>
-
-    </head>
 </html>
