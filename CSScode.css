@@ -11,3 +11,30 @@
   color: black;
   background-color: red;
 }
+
+#navbar {
+  background-color: darkred;
+}
+
+#navbar ul {
+  list-style: none;
+  width: 20%;
+  margin: 0 auto;
+  padding: 0;
+  background-color: black;
+  text-align: center;
+}
+
+#navbar li {
+  width: 5%;
+  background-color: black;
+  border: 3px solid navy;
+  padding: 10px;
+  display: inline-block;
+  line-height: 40px;
+}
+
+#navbar a {
+  color: white;
+  text-decoration: none;
+}
