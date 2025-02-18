@@ -1,10 +1,7 @@
 /* CSS file for style */
 @import url('https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Mono&display=swap');
 
-body {
+.normal_text {
   font-family: "Atkinson Hyperlegible Mono", Atkinson Hyperlegible Mono;
-}
-
-p {
-  color: blue;
+  color: red;
 }
