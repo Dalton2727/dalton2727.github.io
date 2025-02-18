@@ -5,3 +5,9 @@
   font-family: "Atkinson Hyperlegible Mono", Atkinson Hyperlegible Mono;
   color: red;
 }
+
+.black_text {
+  font-family: "Atkinson Hyperlegible Mono", Atkinson Hyperlegible Mono;
+  color: black;
+  background-color: red;
+}
