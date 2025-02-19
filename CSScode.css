@@ -15,23 +15,20 @@
   background-color: darkred;
 }
 
-#navbar ul {
-  list-style: none;
-  width: 20%;
-  margin: 0 auto;
-  padding: 0;
-  background-color: black;
-  text-align: center;
-}
 .sign_image {
   margin-right:15px;
   margin-bottom:10px;
 }
 
+#navbar ul {
+  list-style: none;
+  margin: 0 auto;
+  padding: 0;
+  text-align: right;
+}
+
 #navbar li {
   width: 5%;
-  background-color: black;
-  border: 3px solid navy;
   padding: 10px;
   display: inline-block;
   line-height: 40px;
