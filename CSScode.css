@@ -1,18 +1,36 @@
 /* CSS file for style */
-@import url('https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Mono&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cambay&display=swap');
 
-.normal_text {
-  font-family: "Atkinson Hyperlegible Mono", Atkinson Hyperlegible Mono;
-  color: red;
-}
 
-.black_text {
-  font-family: "Atkinson Hyperlegible Mono", Atkinson Hyperlegible Mono;
-  color: black;
+#about_header{
+  padding-left: 50px;
 }
 
 #navbar {
   background-color: darkred;
+}
+
+#about{
+  padding-left: 50px
+}
+
+
+.body_text {
+  font-family: "Cambay", Cambay;
+  color: black;
+  font-size: 16px;
+  text-align: justify;
+  line-height: 20px;
+  padding-right: 50px;
+  padding-left: 50px;
+}
+
+.head_text{
+  font-family: "Cambay", Cambay;
+  color: black;
+  font-size: 30px;
+  text-align: left;
+  padding-left: 10px
 }
 
 .sign_image {
