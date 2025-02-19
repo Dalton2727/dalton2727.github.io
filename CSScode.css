@@ -9,7 +9,6 @@
 .black_text {
   font-family: "Atkinson Hyperlegible Mono", Atkinson Hyperlegible Mono;
   color: black;
-  background-color: red;
 }
 
 #navbar {
@@ -41,4 +40,25 @@
 #navbar a {
   color: white;
   text-decoration: none;
+}
+
+.flex {
+  display: flex;
+  flex-wrap: nowrap;
+  background-color: darkred;
+  justify-content: center;
+}
+
+.flex > div {
+  margin: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.flex > div img {
+  height: 200px;
+  width: auto;
+  max-width: 100%;
+  object-fit: contain;
 }
