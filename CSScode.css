@@ -24,6 +24,10 @@
   background-color: black;
   text-align: center;
 }
+.sign_image {
+  margin-right:15px;
+  margin-bottom:10px;
+}
 
 #navbar li {
   width: 5%;
