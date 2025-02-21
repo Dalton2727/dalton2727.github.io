@@ -7,4 +7,4 @@ This website is comprised of two HTML files, one CSS file, and multiple images t
 To run the code, all that is necessary is to download all files and open the start.html (or about.html, but start.html is the intended first page) which then has links via a navbar to the other html page. 
 You can also access the website at https://dalton2727.github.io/start.html
 
-
+The work for this project was split 50/50
