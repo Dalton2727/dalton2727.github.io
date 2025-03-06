@@ -1,7 +1,7 @@
 <?php 
+session_start();
 include 'dbconnection.php';
 $userid = isset($_GET['userid']) ? $_GET['userid'] : 'Guest';
-
 ?>
 <!DOCTYPE html>
 
@@ -18,10 +18,10 @@ $userid = isset($_GET['userid']) ? $_GET['userid'] : 'Guest';
             <div id="navbar">
                 <ul>
                     <li style="color: white;">User: <?php echo $userid?></li>
-                    <li> <?php echo '<a href="start2.php?userid=' . urlencode($userid) . '">Home</a>'?>
-                    <li><a href="about.html#about">About</a></li>
-                    <li><a href="about.html#menu">Menu</a></li>
-                    <li><a href="about.html#other">Other</a></li>
+                    <li> <?php echo '<a href="start2.php?userid=' . urlencode($userid) . '">Home</a>'?> </li>
+                    <li> <?php echo '<a href="about2.php?userid=' . urlencode($userid) . '#about">About</a>'; ?> </li>
+                    <li> <?php echo '<a href="about2.php?userid=' . urlencode($userid) . '#menu">Menu</a>'; ?> </li>
+                    <li> <?php echo '<a href="about2.php?userid=' . urlencode($userid) . '#other">Other</a>'; ?> </li>
                     <li><a href="index.php">Start</a></li>
                 </ul>
               </div>
