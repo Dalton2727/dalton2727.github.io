@@ -12,11 +12,16 @@ $row = mysqli_fetch_assoc($result);
 if ($row){
   $hashed_password = $row['password'];
   if (password_verify($password,$hashed_password)) {
-      echo "Login Successful";
+    header("Location: start2.php?userid=" . urlencode($userid));
+    exit();
 } else {
   echo "Wrong User id or password";
+} 
 }
+else {
+  echo "Wrong User id or password";
 }
+
 
 
 // "start.html" is the page that a successful login that will redirect the user to
