@@ -103,15 +103,6 @@
   font-size: 5vw;
 }
 
-#click{
-  background-color: rgb(107, 180, 117);
-  font-size: 3vw;
-  color: rgb(222, 216, 216);
-  width: 20vw;
-  height: 6vw;
-  font-family: "Cambay", Cambay;
-}
-
 iframe {
   border: solid;
   display: flex;
@@ -149,6 +140,16 @@ iframe {
   margin-left: 5vw;
   width: 100%;
   height: 100%;
+}
+
+.button{
+  background-color: rgb(107, 180, 117);
+  font-size: 3vw;
+  color: rgb(222, 216, 216);
+  font-family: "Cambay", Cambay;
+  padding: 1vw 2vw;
+  border-radius: 10px;
+  text-decoration: none;
 }
 /*   Copyright [2025] [Tara Pandey and Dalton Soper]
 
