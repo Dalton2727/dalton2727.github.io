@@ -11,7 +11,9 @@ $num = mysqli_num_rows($result);
 
 // "start.html" is the page that a successful login that will redirect the user to
 if ($num > 0) {
-  echo "Login Success"  
+    header($url = "start.html");
+    header('Location:'. $url);
+    die();   
 } else {
   echo "Wrong User id or password";
 }
