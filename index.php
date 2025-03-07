@@ -43,6 +43,10 @@ echo('PHPSESSID: ' . session_id());
           <input type="text" id="pass" name="password" />
         </p>
         <p>
+          <label> Please re-type PASSWORD: </label>
+          <input type="text" id="pass" name="password2" />
+        </p>
+        <p>
           <input type="submit" id="button" value="Login" />
         </p>
 
