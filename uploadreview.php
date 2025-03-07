@@ -6,8 +6,8 @@ $location = isset($_POST['location']) ? $_POST['location'] : '';
 $meal = isset($_POST['meal']) ? $_POST['meal'] : '';
 $rating = isset($_POST['rating']) ? $_POST['rating'] : '';
 
-
-if ($userid == '' or $location == '' or $meal == '' or $rating == '') {
+#$userid == '' or 
+if ($location == '' or $meal == '' or $rating == '') {
     echo "All forms must be filled in to write a review. Please try again.<br>";
     echo '<a href="reviews.php?userid=' . urlencode($userid) . '">Return to reviews</a>';
   }

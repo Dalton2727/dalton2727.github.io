@@ -151,6 +151,14 @@ iframe {
   border-radius: 10px;
   text-decoration: none;
 }
+
+.review {
+  color: white;
+  border-radius: 2vw;
+  border: 2px solid white !important;
+  padding: 2vw;
+  margin: 2vw;
+}
 /*   Copyright [2025] [Tara Pandey and Dalton Soper]
 
    Licensed under the Apache License, Version 2.0 (the "License");
