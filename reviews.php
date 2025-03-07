@@ -15,16 +15,12 @@ $userid = isset($_GET['userid']) ? $_GET['userid'] : '';
 <body id = "font" style="background-color:rgb(32, 31, 31);">
             <div id="navbar">
                 <ul>
-                    <li> <?php echo '<a href="Edit.php?userid=' . urlencode($userid) . '">Edit review</a>'?> </li>
-                    <li> <?php echo '<a href="write.php?userid=' . urlencode($userid) . '">Write review</a>'?> </li>
-                    <li style="color: white;">User <?php echo $userid?></li>
-                    <li> <?php echo '<a href="start2.php?userid=' . urlencode($userid) . '">Home</a>'?> </li>
-                    <!--
-                    <li> <?php echo '<a href="about2.php?userid=' . urlencode($userid) . '#about">About</a>'; ?> </li>
-                    <li> <?php echo '<a href="about2.php?userid=' . urlencode($userid) . '#menu">Menu</a>'; ?> </li>
-                    <li> <?php echo '<a href="about2.php?userid=' . urlencode($userid) . '#other">Other</a>'; ?> </li>
-                    -->
-                    <li><?php if ($_SESSION['loggedin']){ echo '<a href="reviews.php?userid=' . urlencode($userid) . '">Start</a>';} else {echo '<a href="index.php">Start</a>';}?></li>
+                  <li style="color: white;">User: <?php echo $userid?></li>
+                  <li> <?php echo '<a href="reviews.php?userid=' . urlencode($userid) . '">Reviews</a>'?> </li>
+                  <li> <?php echo '<a href="Edit.php?userid=' . urlencode($userid) . '">Edit</a>'?> </li>
+                  <li> <?php echo '<a href="write.php?userid=' . urlencode($userid) . '">Write</a>'?> </li>
+                  <li> <?php echo '<a href="start2.php?userid=' . urlencode($userid) . '">Home</a>'?> </li>
+                  <li><?php if ($_SESSION['loggedin']){ echo '<a href="index.php?userid=' . urlencode($userid) . '">Log Out</a>';} else {echo '<a href="index.php">Log In</a>';}?></li>
                 </ul>
               </div>
               <div style = "color: white"><?php $sql = "SELECT * FROM reviews";
