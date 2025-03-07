@@ -9,8 +9,8 @@ echo('PHPSESSID: ' . session_id());
 <!DOCTYPE html>
 <html>
   <head>
-    <title>GFG SQL Injection Article</title>
-    <link rel="stylesheet" type="text/css" href="style.css" />
+    <title>Swings Budgeter login form</title>
+    <link rel="stylesheet" type="text/css" href="CSScode.css" />
   </head>
 
   <body>
