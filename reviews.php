@@ -1,7 +1,8 @@
 <?php 
 session_start();
 include 'dbconnection.php';
-$userid = isset($_GET['userid']) ? $_GET['userid'] : '';
+$userid = isset($_GET['userid']) ? $_GET['userid'] : ''; 
+$showReviews = isset($_GET['reviews']) ? $_GET['reviews'] : 'all'; //to switch between "my" and "all" reviews - "all" default
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -25,20 +26,41 @@ $userid = isset($_GET['userid']) ? $_GET['userid'] : '';
               </div>
               <div style = "color: white">
               <?php 
+            if ($showReviews == 'my') {
+              $sql = "SELECT * FROM reviews WHERE username = ?";
+            if ($stmt = $db->prepare($sql)) {
+              $stmt->bind_param("s", $userid); 
+              $stmt->execute();
+              $result = $stmt->get_result();
+              $num = $result->num_rows;
+              while ($row = $result->fetch_assoc()) {
+                echo '<div class="review">';
+                echo "Review ID: " . $row['id'] . " &nbsp;&nbsp;&nbsp; User: " . htmlspecialchars($row['username']) . " &nbsp;&nbsp;&nbsp; Location: " . htmlspecialchars($row['location']) . " &nbsp;&nbsp;&nbsp; Meal: " . htmlspecialchars($row['meal']) . " &nbsp;&nbsp;&nbsp; Rating: " . $row['rating'];
+                echo '</div>';
+            }
+            $stmt->close();
+          }
+        } elseif ($showReviews == 'all') {
               $sql = "SELECT * FROM reviews";
               $result = mysqli_query($db, $sql);
               $num = mysqli_num_rows($result);
-              $i = 1;
+              $i=1;
               while ($i <= $num){
                 $row = mysqli_fetch_assoc($result);
                 echo '<div class="review">';
                 echo "Review ID: " . $row['id'] . " &nbsp;&nbsp;&nbsp; User: " . htmlspecialchars($row['username']) . " &nbsp;&nbsp;&nbsp; Location: " . htmlspecialchars($row['location']) . " &nbsp;&nbsp;&nbsp; Meal: " . htmlspecialchars($row['meal']) . " &nbsp;&nbsp;&nbsp; Rating: " . $row['rating'] . "<br><br>";
                 echo '</div>';
-                $i = $i +1;
+                $i = $i+1;
             }
+        }
               ?></div>
 
 </body>
-
-
+<div style="text-align: center; margin-top: 20px;">
+        <form action="" method="get">
+            <input type="hidden" name="userid" value="<?php echo htmlspecialchars($userid); ?>" />
+            <button type="submit" name="reviews" value="my">My Reviews</button>
+            <button type="submit" name="reviews" value="all">All Reviews</button>
+        </form>
+    </div>
 </html>
