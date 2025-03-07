@@ -23,7 +23,7 @@ $userid = isset($_GET['userid']) ? $_GET['userid'] : '';
                     <li> <?php echo '<a href="about2.php?userid=' . urlencode($userid) . '#menu">Menu</a>'; ?> </li>
                     <li> <?php echo '<a href="about2.php?userid=' . urlencode($userid) . '#other">Other</a>'; ?> </li>
                     <li> <?php echo '<a href="reviews.php?userid=' . urlencode($userid) . '">Reviews</a>'?> </li>
-                    <li><?php if ($_SESSION['loggedin']){ echo '<a href="index.php?userid=' . urlencode($userid) . '">Log Out</a>';} else {echo '<a href="index.php">Log In</a>';}?></li>
+                    <li><?php echo '<a href="logout.php">Log Out</a>'; ?></li>
                 </ul>
               </div>
               <h1 id = "slogan"> Spend your points guilt free. </h1>
@@ -35,7 +35,7 @@ $userid = isset($_GET['userid']) ? $_GET['userid'] : '';
                         <p>Keeping track of your points can be stressful and laborious.
                         With our site, budgeting is merely a swipe away!
                         </p>
-                        <a href="index.php" class="button">Start</a>
+                        <a href="<?php if ($_SESSION["loggedin"] == true) {echo 'reviews.php?userid=' . urlencode($userid) ;} else {echo 'index.php' ;}?>" class="button">Start</a>
                     </div>
             </div>
             <div>
