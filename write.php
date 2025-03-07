@@ -2,6 +2,25 @@
 session_start();
 include 'dbconnection.php';
 $userid = isset($_GET['userid']) ? $_GET['userid'] : '';
+
+//creates lists from the query for menu items and locations
+$locations = [];
+$meals = [];
+
+//locations
+$query = "SELECT DISTINCT location FROM Menu";
+$result = mysqli_query($db, $query); 
+while ($row = mysqli_fetch_assoc($result)) {
+    $locations[] = $row['location'];
+}
+
+//menu
+$query = "SELECT DISTINCT item FROM Menu";
+$result = mysqli_query($db, $query);
+
+while ($row = mysqli_fetch_assoc($result)) {
+    $meals[] = $row['item'];
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -33,21 +52,31 @@ $userid = isset($_GET['userid']) ? $_GET['userid'] : '';
       <input type="hidden" name="userid" value="<?php echo htmlspecialchars($userid); ?>" />
         <p>
           <label> Location: </label>
-          <input type="text" id="location" name="location" />
+          <select id="location" name="location">
+            <option value="">Select a location</option>
+            <?php foreach ($locations as $location): ?>
+              <option value="<?php echo htmlspecialchars($location); ?>"><?php echo htmlspecialchars($location); ?></option>
+                    <?php endforeach; ?>
+          </select>
         </p>
 
         <p>
           <label> Meal: </label>
-          <input type="text" id="meal" name="meal" />
+          <select id="meal" name="meal">
+            <option value="">Select a meal</option>
+            <?php foreach ($meals as $meal): ?>
+              <option value="<?php echo htmlspecialchars($meal); ?>"><?php echo htmlspecialchars($meal); ?></option>
+                    <?php endforeach; ?>
+          </select>
         </p>
 
         <p>
-          <label> Rating (a number from 1-10:) </label>
-          <input type="number" id="rating" name="rating" />
+          <label> Rating (1-10:) </label>
+          <input type="number" name="rating" min ="1" max="10" />
         </p>
 
         <p>
-          <input type="submit" id="button" value="Post" />
+          <input type="submit" value="Post" />
         </p>
 </form>
 </div>
