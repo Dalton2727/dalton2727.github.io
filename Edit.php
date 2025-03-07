@@ -25,7 +25,7 @@ while ($row = mysqli_fetch_assoc($result)) {
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta name="Swings points balance" content="" />
         <meta name="description" content="Wesleyan University Point budgeter"/>
-        <link rel="stylesheet" type = "text/css" href="CSScode2.css" />
+        <link rel="stylesheet" href="CSScode.css" />
     </head>
 <body id = "font" style="background-color:rgb(243, 70, 70);">
             <div id="navbar">
@@ -35,9 +35,8 @@ while ($row = mysqli_fetch_assoc($result)) {
                   <li> <?php echo '<a href="Edit.php?userid=' . urlencode($userid) . '">Edit</a>'?> </li>
                   <li> <?php echo '<a href="write.php?userid=' . urlencode($userid) . '">Write</a>'?> </li>
                   <li> <?php echo '<a href="start2.php?userid=' . urlencode($userid) . '">Home</a>'?> </li>
-                  <li><?php if ($_SESSION['loggedin']){ echo '<a href="index.php?userid=' . urlencode($userid) . '">Log Out</a>';} else {echo '<a href="index.php">Log In</a>';}?></li>
+                  <li><?php echo '<a href="logout.php">Log Out</a>'; ?></li>
                 </ul>
-
               </div>
               <div>
                 <h1> Type in the id of the review you want to edit and what you want to change for the location, meal, and/or rating</h1>
