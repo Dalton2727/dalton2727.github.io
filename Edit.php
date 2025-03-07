@@ -80,7 +80,7 @@ while ($row = mysqli_fetch_assoc($result)) {
             <input type="hidden" name="userid" value="<?php echo htmlspecialchars($userid); ?>" />
                     <p>
                     <label> If you want to delete a review, type its id here: </label>
-                    <input type="number" name="rating" min ="1" max="10" />
+                    <input type="number" name="revid" min ="1" max="10" />
                     </p>
 
                     <p>
