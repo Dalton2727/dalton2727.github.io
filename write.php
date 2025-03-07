@@ -1,26 +1,8 @@
+
 <?php 
 session_start();
 include 'dbconnection.php';
 $userid = isset($_GET['userid']) ? $_GET['userid'] : '';
-
-//creates lists from the query for menu items and locations
-$locations = [];
-$meals = [];
-
-//locations
-$query = "SELECT DISTINCT location FROM Menu";
-$result = mysqli_query($db, $query); 
-while ($row = mysqli_fetch_assoc($result)) {
-    $locations[] = $row['location'];
-}
-
-//menu
-$query = "SELECT DISTINCT item FROM Menu";
-$result = mysqli_query($db, $query);
-
-while ($row = mysqli_fetch_assoc($result)) {
-    $meals[] = $row['item'];
-}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -35,14 +17,12 @@ while ($row = mysqli_fetch_assoc($result)) {
             <div id="navbar">
                 <ul>
                     <li> <?php echo '<a href="Edit.php?userid=' . urlencode($userid) . '">Edit review</a>'?> </li>
-                    <li> <?php echo '<a href="write.php?userid=' . urlencode($userid) . '">Write review</a>'?> </li>
-                    <li style="color: white;">User <?php echo $userid?></li>
+                    <li> <?php echo '<a href="write.php?userid=' . urlencode($userid) . '">Write a review</a>'?> </li>
+                    <li style="color: white;">User: <?php echo $userid?></li>
                     <li> <?php echo '<a href="start2.php?userid=' . urlencode($userid) . '">Home</a>'?> </li>
-                    <!--
                     <li> <?php echo '<a href="about2.php?userid=' . urlencode($userid) . '#about">About</a>'; ?> </li>
                     <li> <?php echo '<a href="about2.php?userid=' . urlencode($userid) . '#menu">Menu</a>'; ?> </li>
                     <li> <?php echo '<a href="about2.php?userid=' . urlencode($userid) . '#other">Other</a>'; ?> </li>
-                    -->
                     <li><?php if ($_SESSION['loggedin']){ echo '<a href="reviews.php?userid=' . urlencode($userid) . '">Start</a>';} else {echo '<a href="index.php">Start</a>';}?></li>
                 </ul>
               </div>
@@ -52,31 +32,21 @@ while ($row = mysqli_fetch_assoc($result)) {
       <input type="hidden" name="userid" value="<?php echo htmlspecialchars($userid); ?>" />
         <p>
           <label> Location: </label>
-          <select id="location" name="location">
-            <option value="">Select a location</option>
-            <?php foreach ($locations as $location): ?>
-              <option value="<?php echo htmlspecialchars($location); ?>"><?php echo htmlspecialchars($location); ?></option>
-                    <?php endforeach; ?>
-          </select>
+          <input type="text" id="location" name="location" />
         </p>
 
         <p>
           <label> Meal: </label>
-          <select id="meal" name="meal">
-            <option value="">Select a meal</option>
-            <?php foreach ($meals as $meal): ?>
-              <option value="<?php echo htmlspecialchars($meal); ?>"><?php echo htmlspecialchars($meal); ?></option>
-                    <?php endforeach; ?>
-          </select>
+          <input type="text" id="meal" name="meal" />
         </p>
 
         <p>
-          <label> Rating (1-10:) </label>
-          <input type="number" name="rating" min ="1" max="10" />
+          <label> Rating (a number from 1-10:) </label>
+          <input type="number" id="rating" name="rating" />
         </p>
 
         <p>
-          <input type="submit" value="Post" />
+          <input type="submit" id="button" value="Post" />
         </p>
 </form>
 </div>
