@@ -29,11 +29,12 @@ $meals = $result->fetch_all(MYSQLI_ASSOC);
 <body id = "font" style="background-color:rgb(243, 70, 70);">
             <div id="navbar">
                 <ul>
-                    <li> <?php echo '<a href="Edit.php?userid=' . urlencode($userid) . '">Edit</a>'?> </li>
-                    <li> <?php echo '<a href="write.php?userid=' . urlencode($userid) . '">Write</a>'?> </li>
-                    <li style="color: white;">User: <?php echo $userid?></li>
-                    <li> <?php echo '<a href="start2.php?userid=' . urlencode($userid) . '">Home</a>'?> </li>
-                    <li><?php if ($_SESSION['loggedin']){ echo '<a href="reviews.php?userid=' . urlencode($userid) . '">Start</a>';} else {echo '<a href="index.php">Start</a>';}?></li>
+                  <li style="color: white;">User: <?php echo $userid?></li>
+                  <li> <?php echo '<a href="reviews.php?userid=' . urlencode($userid) . '">Reviews</a>'?> </li>
+                  <li> <?php echo '<a href="Edit.php?userid=' . urlencode($userid) . '">Edit</a>'?> </li>
+                  <li> <?php echo '<a href="write.php?userid=' . urlencode($userid) . '">Write</a>'?> </li>
+                  <li> <?php echo '<a href="start2.php?userid=' . urlencode($userid) . '">Home</a>'?> </li>
+                  <li><?php if ($_SESSION['loggedin']){ echo '<a href="index.php?userid=' . urlencode($userid) . '">Log Out</a>';} else {echo '<a href="index.php">Log In</a>';}?></li>
                 </ul>
               </div>
     <div id="form">
