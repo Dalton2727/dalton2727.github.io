@@ -12,8 +12,11 @@ if ($revid == ''){
     echo "Please input the id of the review you want to edit";
     echo '<a href="reviews.php?userid=' . urlencode($userid) . '">Return to reviews</a>';
 }else {
-    $sql = "SELECT * FROM reviews WHERE username = '$userid' AND id = $revid";
-    $result = mysqli_query($db, $sql);
+    $sql = "SELECT * FROM reviews WHERE username = ? AND id = ?";
+    $stmt = mysqli_prepare($db, $sql);
+    mysqli_stmt_bind_param($stmt, "si", $userid, $revid);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
     $num = mysqli_num_rows($result);
 }
 if ($num < 1){
@@ -21,18 +24,21 @@ if ($num < 1){
     echo '<a href="reviews.php?userid=' . urlencode($userid) . '">Return to reviews</a>';
 } else {
     if ($location != ''){
-        $sql = "UPDATE reviews SET location='$location' WHERE id=$revid";
+        $sql = "UPDATE reviews SET location= ? WHERE id= ?";
         $stmt = mysqli_prepare($db, $sql);
+        mysqli_stmt_bind_param($stmt, "si", $location, $revid);
         mysqli_stmt_execute($stmt);
     }
     if ($meal != ''){
-        $sql = "UPDATE reviews SET meal='$meal' WHERE id=$revid";
+        $sql = "UPDATE reviews SET meal= ? WHERE id= ?";
         $stmt = mysqli_prepare($db, $sql);
+        mysqli_stmt_bind_param($stmt, "si", $meal, $revid); 
         mysqli_stmt_execute($stmt);
     }
     if ($rating != ''){
-        $sql = "UPDATE reviews SET rating='$rating' WHERE id=$revid";
+        $sql = "UPDATE reviews SET rating=? WHERE id=?";
         $stmt = mysqli_prepare($db, $sql);
+        mysqli_stmt_bind_param($stmt, "di", $rating, $revid);
         mysqli_stmt_execute($stmt);
     }
     echo "Review has been updated.<br>";

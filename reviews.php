@@ -27,7 +27,9 @@ $userid = isset($_GET['userid']) ? $_GET['userid'] : '';
                     <li><?php if ($_SESSION['loggedin']){ echo '<a href="reviews.php?userid=' . urlencode($userid) . '">Start</a>';} else {echo '<a href="index.php">Start</a>';}?></li>
                 </ul>
               </div>
-              <div style = "color: white"><?php $sql = "SELECT * FROM reviews";
+              <div style = "color: white">
+              <?php 
+              $sql = "SELECT * FROM reviews";
               $result = mysqli_query($db, $sql);
               $num = mysqli_num_rows($result);
               $i = 1;
