@@ -2,6 +2,21 @@
 session_start();
 include 'dbconnection.php';
 $userid = isset($_GET['userid']) ? $_GET['userid'] : '';
+
+$locations = [];
+$meals = [];
+
+$query = "SELECT DISTINCT location FROM Menu";
+$result = mysqli_query($db, $query); 
+while ($row = mysqli_fetch_assoc($result)) {
+    $locations[] = $row['location'];
+}
+
+$query = "SELECT DISTINCT item FROM Menu";
+$result = mysqli_query($db, $query);
+while ($row = mysqli_fetch_assoc($result)) {
+    $meals[] = $row['item'];
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -51,17 +66,27 @@ $userid = isset($_GET['userid']) ? $_GET['userid'] : '';
 
                     <p>
                     <label> Location (leave blank for no change): </label>
-                    <input type="text" name="location" />
+                    <select name="location">
+                      <option value="">Select a location</option>
+                      <?php foreach ($locations as $location): ?>
+                        <option value="<?php echo htmlspecialchars($location); ?>"><?php echo htmlspecialchars($location); ?></option>
+                        <?php endforeach; ?>
+                    </select>
                     </p>
 
                     <p>
                     <label> Meal (leave blank for no change): </label>
-                    <input type="text" name="meal" />
+                    <select name="meal">
+                      <option value="">Select a meal</option>
+                      <?php foreach ($meals as $meal): ?>
+                          <option value="<?php echo htmlspecialchars($meal); ?>"><?php echo htmlspecialchars($meal); ?></option>
+                      <?php endforeach; ?>
+                    </select>
                     </p>
 
                     <p>
                     <label> Rating (leave blank for no change): </label>
-                    <input type="number" name="rating" />
+                    <input type="number" name="rating" min="1" max="10" />
                     </p>
 
                     <p>
