@@ -9,7 +9,7 @@ if ($revid == ''){
     echo "Please input the id of the review you want to delete";
     echo '<a href="reviews.php?userid=' . urlencode($userid) . '">Return to reviews</a>';
 } else {
-    $sql = "SELECT * FROM reviews WHERE username = '?' AND id = ?";
+    $sql = "SELECT * FROM reviews WHERE username = ? AND id = ?";
     $stmt = mysqli_prepare($db, $sql);
     mysqli_stmt_bind_param($stmt, "si", $userid, $revid);
     mysqli_stmt_execute($stmt);
@@ -22,7 +22,7 @@ if ($num < 1){
 } else {
     $sql = "DELETE FROM reviews WHERE id=?";
     $stmt = mysqli_prepare($db, $sql);
-    mysqli_stmt_bind_param($stmt, "i", $revid)
+    mysqli_stmt_bind_param($stmt, "i", $revid);
     mysqli_stmt_execute($stmt);
     echo "Review has been deleted.<br>";
     echo '<a href="reviews.php?userid=' . urlencode($userid) . '">Return to reviews</a>';
