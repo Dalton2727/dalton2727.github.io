@@ -15,6 +15,7 @@ $userid = isset($_GET['userid']) ? $_GET['userid'] : '';
 <body id = "font" style="background-color:rgb(32, 31, 31);">
             <div id="navbar">
                 <ul>
+                    <li> <?php echo '<a href="Edit.php?userid=' . urlencode($userid) . '">Edit review</a>'?> </li>
                     <li> <?php echo '<a href="write.php?userid=' . urlencode($userid) . '">Write a review</a>'?> </li>
                     <li style="color: white;">User: <?php echo $userid?></li>
                     <li> <?php echo '<a href="start2.php?userid=' . urlencode($userid) . '">Home</a>'?> </li>
@@ -30,7 +31,7 @@ $userid = isset($_GET['userid']) ? $_GET['userid'] : '';
               $i = 1;
               while ($i <= $num){
                 $row = mysqli_fetch_assoc($result);
-                echo "Review number: " . $row['id'] . " User: " . htmlspecialchars($row['username']) . " Location: " . htmlspecialchars($row['location']) . " Meal: " . htmlspecialchars($row['meal']) . " Rating: " . $row['rating'] . "<br><br>";
+                echo "Review number: " . $row['id'] . " &nbsp;&nbsp;&nbsp; User: " . htmlspecialchars($row['username']) . " &nbsp;&nbsp;&nbsp; Location: " . htmlspecialchars($row['location']) . " &nbsp;&nbsp;&nbsp; Meal: " . htmlspecialchars($row['meal']) . " &nbsp;&nbsp;&nbsp; Rating: " . $row['rating'] . "<br><br>";
                 $i = $i +1;
             }
               ?></div>
