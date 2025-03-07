@@ -1,4 +1,5 @@
 <?php
+session_start();
 include 'dbconnection.php';
 $userid = $_POST['userid'];
 $password = $_POST['password'];
@@ -12,6 +13,7 @@ $row = mysqli_fetch_assoc($result);
 if ($row){
   $hashed_password = $row['password'];
   if (password_verify($password,$hashed_password)) {
+    $_SESSION["loggedin"] = true;
     header("Location: start2.php?userid=" . urlencode($userid));
     exit();
 } else {
