@@ -4,24 +4,18 @@ session_start();
 include 'dbconnection.php';
 $userid = isset($_GET['userid']) ? $_GET['userid'] : '';
 
-//creates lists from the query for menu items and locations
-$locations = [];
-$meals = [];
-
-//locations
 $query = "SELECT DISTINCT location FROM Menu";
-$result = mysqli_query($db, $query); 
-while ($row = mysqli_fetch_assoc($result)) {
-    $locations[] = $row['location'];
-}
+$stmt = $db->prepare($query);
+$stmt->execute();
+$result = $stmt->get_result();
+$locations = $result->fetch_all(MYSQLI_ASSOC);
 
-//menu
 $query = "SELECT DISTINCT item FROM Menu";
-$result = mysqli_query($db, $query);
+$stmt = $db->prepare($query);
+$stmt->execute();
+$result = $stmt->get_result();
+$meals = $result->fetch_all(MYSQLI_ASSOC);
 
-while ($row = mysqli_fetch_assoc($result)) {
-    $meals[] = $row['item'];
-}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -52,7 +46,7 @@ while ($row = mysqli_fetch_assoc($result)) {
         <select id="location" name="location">
           <option value="">Select a location</option>
           <?php foreach ($locations as $location): ?>
-            <option value="<?php echo htmlspecialchars($location); ?>"><?php echo htmlspecialchars($location); ?></option>
+            <option value="<?php echo htmlspecialchars($location['location']); ?>"><?php echo htmlspecialchars($location['location']); ?></option>
               <?php endforeach; ?>
         </select>
       </p>
@@ -62,7 +56,7 @@ while ($row = mysqli_fetch_assoc($result)) {
         <select id="meal" name="meal">
           <option value="">Select a meal</option>
           <?php foreach ($meals as $meal): ?>
-            <option value="<?php echo htmlspecialchars($meal); ?>"><?php echo htmlspecialchars($meal); ?></option>
+            <option value="<?php echo htmlspecialchars($meal['item']); ?>"><?php echo htmlspecialchars($meal['item']); ?></option>
               <?php endforeach; ?>
         </select>
       </p>
