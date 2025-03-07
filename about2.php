@@ -1,7 +1,7 @@
 <?php 
 session_start();
 include 'dbconnection.php';
-$userid = isset($_GET['userid']) ? $_GET['userid'] : 'Guest';
+$userid = isset($_GET['userid']) ? $_GET['userid'] : '';
 ?>
 
 <!DOCTYPE html>
