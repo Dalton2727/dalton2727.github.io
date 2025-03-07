@@ -21,7 +21,7 @@ $showReviews = isset($_GET['reviews']) ? $_GET['reviews'] : 'all'; //to switch b
                   <li> <?php echo '<a href="Edit.php?userid=' . urlencode($userid) . '">Edit</a>'?> </li>
                   <li> <?php echo '<a href="write.php?userid=' . urlencode($userid) . '">Write</a>'?> </li>
                   <li> <?php echo '<a href="start2.php?userid=' . urlencode($userid) . '">Home</a>'?> </li>
-                  <li><?php if ($_SESSION['loggedin']){ echo '<a href="index.php?userid=' . urlencode($userid) . '">Log Out</a>';} else {echo '<a href="index.php">Log In</a>';}?></li>
+                  <li><?php echo '<a href="logout.php">Log Out</a>'; ?></li>
                 </ul>
               </div>
               <div style = "color: white">
