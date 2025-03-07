@@ -17,7 +17,7 @@ $userid = isset($_GET['userid']) ? $_GET['userid'] : 'Guest';
                     <li> <?php echo '<a href="about2.php?userid=' . urlencode($userid) . '#about">About</a>'; ?> </li>
                     <li> <?php echo '<a href="about2.php?userid=' . urlencode($userid) . '#menu">Menu</a>'; ?> </li>
                     <li> <?php echo '<a href="about2.php?userid=' . urlencode($userid) . '#other">Other</a>'; ?> </li>
-                    <li><a href="index.php">Start</a></li>
+                    <li><?php if ($_SESSION['loggedin']){ echo '<a href="reviews.php?userid=' . urlencode($userid) . '">Start</a>';} else {echo '<a href="index.php">Start</a>';}?></li>
         </ul>
       </div>
     <body id = font style="background-color:rgb(32, 31, 31);">
