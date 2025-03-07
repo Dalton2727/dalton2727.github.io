@@ -8,3 +8,15 @@ To run the code, all that is necessary is to download all files and open the sta
 You can also access the website at https://dalton2727.github.io/start.html
 
 The work for this project was split 50/50
+
+
+SQL inputs:
+first set up a database named "login". Then input the following command under SQL:
+CREATE TABLE users (username VARCHAR(255) PRIMARY KEY, password TEXT);
+
+CREATE TABLE reviews
+    (id INTEGER PRIMARY KEY AUTO_INCREMENT,
+    username TEXT,
+    location TEXT,
+    meal TEXT,
+    rating INTEGER);
