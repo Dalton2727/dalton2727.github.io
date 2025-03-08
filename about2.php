@@ -3,7 +3,7 @@ session_start();
 include 'dbconnection.php';
 $userid = isset($_GET['userid']) ? $_GET['userid'] : '';
 ?>
-
+//about.html page but converted to php
 <!DOCTYPE html>
 <html lang="en">
     <meta charset="utf-8" />

@@ -10,15 +10,17 @@ mysqli_stmt_execute($stmt);
 $result = mysqli_stmt_get_result($stmt);
 $num = mysqli_num_rows($result);
 
-
+//makes sure all forms are filled in including entering password twice
 if ($userid == '' or $password == '' or $password2 == '') {
   echo "All forms must be filled in to register a username and password. Please try again.<br>";
   echo "<a href=\"index.php\">Return to register page</a>";
 } else {
+  //if user has already been created with this user name
   if ($num > 0){
     echo "This username is taken, please select a different one <br>";
     echo "<a href=\"index.php\">Return to register page</a>";
   }
+  //checks that passwords match
   elseif($password != $password2){
     echo "Both passwords do not match. Please try again.<br>";
     echo "<a href=\"index.php\">Return to register page</a>";

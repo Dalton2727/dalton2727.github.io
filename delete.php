@@ -1,10 +1,11 @@
-<?php 
+<?php
+//if user wants to delete the post 
 session_start();
 include 'dbconnection.php';
 $userid = isset($_POST['userid']) ? $_POST['userid'] : '';
 $revid = isset($_POST['revid']) ? $_POST['revid'] : '';
 
-
+//makes sure the user is referencing the right post and that the user created the post in order to delete it
 if ($revid == ''){
     echo "Please input the id of the review you want to delete";
     echo '<a href="reviews.php?userid=' . urlencode($userid) . '">Return to reviews</a>';

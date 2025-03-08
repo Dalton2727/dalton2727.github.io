@@ -6,7 +6,7 @@ $location = isset($_POST['location']) ? $_POST['location'] : '';
 $meal = isset($_POST['meal']) ? $_POST['meal'] : '';
 $rating = isset($_POST['rating']) ? $_POST['rating'] : '';
 
-#$userid == '' or 
+//checks that we can upload reviews if all fields have been filled
 if ($location == '' or $meal == '' or $rating == '') {
     echo "All forms must be filled in to write a review. Please try again.<br>";
     echo '<a href="reviews.php?userid=' . urlencode($userid) . '">Return to reviews</a>';

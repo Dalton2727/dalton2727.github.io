@@ -7,7 +7,6 @@ $location = isset($_POST['location']) ? $_POST['location'] : '';
 $meal = isset($_POST['meal']) ? $_POST['meal'] : '';
 $rating = isset($_POST['rating']) ? $_POST['rating'] : '';
 
-
 if ($revid == ''){
     echo "Please input the id of the review you want to edit";
     echo '<a href="reviews.php?userid=' . urlencode($userid) . '">Return to reviews</a>';
@@ -19,6 +18,8 @@ if ($revid == ''){
     $result = mysqli_stmt_get_result($stmt);
     $num = mysqli_num_rows($result);
 }
+//makes sure review matches with user, if not, user then has to choose one of their reviews
+//option to not change parts of review
 if ($num < 1){
     echo "Please choose one of your reviews";
     echo '<a href="reviews.php?userid=' . urlencode($userid) . '">Return to reviews</a>';

@@ -6,6 +6,7 @@ echo 'Welcome to page #1<br />';
 echo('PHPSESSID: ' . session_id());
 
 ?>
+//login page
 <!DOCTYPE html>
 <html>
   <head>

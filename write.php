@@ -1,4 +1,4 @@
-
+//to write the reviews
 <?php 
 session_start();
 include 'dbconnection.php';
@@ -29,6 +29,7 @@ $meals = $result->fetch_all(MYSQLI_ASSOC);
 <body id = "font" style="background-color:rgb(243, 70, 70);">
             <div id="navbar">
                 <ul>
+                  //different navbar here and on edit and reviews pages vs the home and about pages in order to access reviews
                   <li style="color: white;">User: <?php echo $userid?></li>
                   <li> <?php echo '<a href="reviews.php?userid=' . urlencode($userid) . '">Reviews</a>'?> </li>
                   <li> <?php echo '<a href="Edit.php?userid=' . urlencode($userid) . '">Edit</a>'?> </li>
@@ -42,6 +43,7 @@ $meals = $result->fetch_all(MYSQLI_ASSOC);
       <form name="form" action="uploadreview.php" method="POST">
       <input type="hidden" name="userid" value="<?php echo htmlspecialchars($userid); ?>" />
       <p>
+        //allows user to choose between menu locations included in Menu SQL table
         <label> Location: </label>
         <select id="location" name="location">
           <option value="">Select a location</option>
@@ -50,7 +52,7 @@ $meals = $result->fetch_all(MYSQLI_ASSOC);
               <?php endforeach; ?>
         </select>
       </p>
-
+            //allows user to choose between menu items included in Menu SQL table
       <p>
         <label> Meal: </label>
         <select id="meal" name="meal">
@@ -62,6 +64,7 @@ $meals = $result->fetch_all(MYSQLI_ASSOC);
       </p>
 
         <p>
+          //makes sure rating is only between 1-10
           <label> Rating (1-10:) </label>
           <input type="number" name="rating" min ="1" max="10" />
         </p>
