@@ -12,6 +12,9 @@ The work for this project was split 50/50
 To load our website locally, first download all files and put them in your htdocs folder.
 Then, setup an sql database named "login". Then in that database, under the SQL tag, copy and past the SQL code at the bottom of this page.
 After the SQL database has been setup, navigate to localhost in a browser, taking you to the login page.
+From the login page, you can create a username and password to log in and will then reach the landing page. There is a navbar on the top, you can click reviews to navigate to the reviews features (i.e. edit, delete, write).
+
+(The start page leads to a demo of our budgeting app)
 
 SQL code:
 
