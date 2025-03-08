@@ -9,7 +9,8 @@ mysqli_stmt_bind_param($stmt, "s", $userid);
 mysqli_stmt_execute($stmt);
 $result = mysqli_stmt_get_result($stmt);
 $row = mysqli_fetch_assoc($result);
-
+//verifys login, tells user if the user id and password don't match
+//redirects them to start id they can log in, if not, the site tells them that the user id and password don't match (can try again)
 if ($row){
   $hashed_password = $row['password'];
   if (password_verify($password,$hashed_password)) {

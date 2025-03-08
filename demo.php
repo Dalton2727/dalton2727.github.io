@@ -2,7 +2,7 @@
 session_start();
 include 'dbconnection.php';
 
-
+//calls to the user id and budget for the budget tracker
 $userid = $_SESSION['userid'];
 
 if (!isset($_SESSION['budget'])) {
@@ -15,6 +15,7 @@ if (!isset($_SESSION['remaining'])) {
     $_SESSION['remaining'] = $_SESSION['budget'] - $_SESSION['spent'];
 }
 
+//calls on the menu SQL table in order to extract prices, location, ctegory and item to be able to reference the unique item purhcased
 $query = "SELECT DISTINCT location FROM Menu";
 $stmt = $db->prepare($query);
 $stmt->execute();
@@ -59,7 +60,7 @@ $remaining = $_SESSION['remaining'];
 $percentageSpent = ($spent / $budget) * 100;
 $percentageSpent = min($percentageSpent, 100); 
 ?>
-
+<!-- creates a progress bar tracker and ability to insert budget for functionality of demo-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -89,6 +90,7 @@ $percentageSpent = min($percentageSpent, 100);
             width: 60%;
             margin: auto;
         }
+        
 
         .progress-container {
             width: 100%;
@@ -97,7 +99,6 @@ $percentageSpent = min($percentageSpent, 100);
             overflow: hidden;
             margin-top: 20px;
         }
-
         .progress-bar {
             height: 30px;
             width: <?php echo $percentageSpent; ?>%;

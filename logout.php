@@ -1,3 +1,4 @@
+//logout page when user clicks "Log Out" in nav bar
 <?php 
 session_start();
 include 'dbconnection.php';

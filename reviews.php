@@ -1,3 +1,4 @@
+//shows all reviews posted
 <?php 
 session_start();
 include 'dbconnection.php';
@@ -25,7 +26,7 @@ $showReviews = isset($_GET['reviews']) ? $_GET['reviews'] : 'all'; //to switch b
                 </ul>
               </div>
               <div style = "color: white">
-              <?php 
+              <?php //only shows the users reviews if they click the my reviews button
             if ($showReviews == 'my') {
               $sql = "SELECT * FROM reviews WHERE username = ?";
             if ($stmt = $db->prepare($sql)) {
@@ -40,6 +41,7 @@ $showReviews = isset($_GET['reviews']) ? $_GET['reviews'] : 'all'; //to switch b
             }
             $stmt->close();
           }
+          
         } elseif ($showReviews == 'all') {
               $sql = "SELECT * FROM reviews";
               $result = mysqli_query($db, $sql);
@@ -54,7 +56,7 @@ $showReviews = isset($_GET['reviews']) ? $_GET['reviews'] : 'all'; //to switch b
             }
         }
               ?></div>
-
+<!-- option for my reviews or all reviews option to make it easier for user to filter to their reviews -->
 </body>
 <div style="text-align: center; margin-top: 20px;">
         <form action="" method="get">

@@ -18,6 +18,7 @@ while ($row = mysqli_fetch_assoc($result)) {
     $meals[] = $row['item'];
 }
 ?>
+//allows user to edit rating, some parts don't have to be changed
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -80,6 +81,7 @@ while ($row = mysqli_fetch_assoc($result)) {
             <form name="form" action="delete.php" method="POST">
             <input type="hidden" name="userid" value="<?php echo htmlspecialchars($userid); ?>" />
                     <p>
+                      <!-- option to delete reviews, checks if review is created by the current user-->
                     <label> If you want to delete a review, type its id here: </label>
                     <input type="number" name="revid" min ="1" max="10" />
                     </p>
