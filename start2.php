@@ -18,6 +18,7 @@ $userid = isset($_GET['userid']) ? $_GET['userid'] : '';
             <div id="navbar">
                 <ul>
                     <li style="color: white;">User: <?php echo $userid?></li>
+                    <li> <?php echo '<a href="demo.php?userid=' . urlencode($userid) . '">Start</a>'?> </li>
                     <li> <?php echo '<a href="start2.php?userid=' . urlencode($userid) . '">Home</a>'?> </li>
                     <li> <?php echo '<a href="about2.php?userid=' . urlencode($userid) . '#about">About</a>'; ?> </li>
                     <li> <?php echo '<a href="about2.php?userid=' . urlencode($userid) . '#menu">Menu</a>'; ?> </li>
