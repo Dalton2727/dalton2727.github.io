@@ -6,6 +6,8 @@ The work for this project was split 50/50
 
 <img width="1439" alt="Screenshot 2025-03-07 at 6 45 21 PM" src="https://github.com/user-attachments/assets/46525793-7d5a-4b18-a57c-982cd398ba82" />
 
+<img width="1470" alt="Screenshot 2025-03-07 at 11 37 08 PM" src="https://github.com/user-attachments/assets/5879ae59-fd49-43c4-8505-22db066df650" />
+
 
 To load our website locally, first download all files and put them in your htdocs folder.
 Then, setup an sql database named "login". Then in that database, under the SQL tag, copy and past the SQL code at the bottom of this page.
