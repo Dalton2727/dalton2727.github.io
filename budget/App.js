@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, Alert, StyleSheet } from 'react-native';
 
-export default function MenuScreen() {
-  const [menuData, setMenuData] = useState([]);
+export default function ReviewsScreen() {
+  const [reviewData, setReviewData] = useState([]);
   const [loading, setLoading] = useState(true);
 
 const fetchFromServer = async () => {
@@ -14,9 +14,9 @@ const fetchFromServer = async () => {
     if (!response.ok) throw new Error(`HTTP status ${response.status}`);
 
     const data = await response.json();
-    console.log('Menu Items:', data);
+    console.log('Reviews:', data);
 
-    setMenuData(data);
+    setReviewData(data);
   } catch (error) {
     console.error('Fetch error:', error.message);
     Alert.alert('Error', error.message);
@@ -31,17 +31,26 @@ const fetchFromServer = async () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Menu Screen</Text>
+      <Text style={styles.header}>Review Screen</Text>
       {loading ? (
         <Text>Loading...</Text>
       ) : (
-        <FlatList
-          data={menuData}
-          keyExtractor={(item, index) => index.toString()}
-          renderItem={({ item }) => (
-            <Text style={styles.item}>{JSON.stringify(item)}</Text>
-          )}
-        />
+        reviewData.length > 0 ? (
+          <FlatList
+            data={reviewData}
+            keyExtractor={(item, index) => index.toString()}
+            renderItem={({ item }) => (
+              <View style={styles.card}>
+                <Text style={styles.username}>User: {item.username}</Text>
+                <Text> Location: {item.location}</Text>
+                <Text> Meal Item: {item.meal}</Text>
+                <Text> Rating: {item.rating}/10</Text>
+              </View>
+            )}
+          />
+        ) : (
+          <Text>No reviews available.</Text>
+        )
       )}
     </View>
   );
@@ -58,9 +67,20 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 10,
   },
-  item: {
-    padding: 10,
-    borderBottomWidth: 1,
-    borderColor: '#ccc',
+  card: {
+    backgroundColor: '#f9f9f9',
+    padding: 15,
+    marginVertical: 8,
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  username: {
+    fontWeight: 'bold',
+    fontSize: 16,
+    marginBottom: 4,
   },
 });
