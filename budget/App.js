@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, Alert, StyleSheet } from 'react-native';
+import { View, Text, FlatList, Alert, StyleSheet, Button } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { WebView } from 'react-native-webview';
@@ -28,6 +28,43 @@ const fetchFromServer = async () => {
     Alert.alert('Error', error.message);
   } finally {
     setLoading(false);
+  }
+};
+
+const handleDelete = async (reviewId, username) => {
+  try {
+    console.log('Attempting to delete review with ID:', reviewId, 'for user:', username);
+    
+    const formData = new FormData();
+    formData.append('revid', reviewId);
+    formData.append('userid', username);
+    
+    const response = await fetch('http://10.0.2.2/delete_review_api.php', {
+      method: 'POST',
+      body: formData,
+    });
+
+    console.log('Delete response status:', response.status);
+    
+    // Check if the response is not OK
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || 'Failed to delete review');
+    }
+
+    const responseData = await response.json();
+    console.log('Delete response:', responseData);
+
+    if (responseData.success) {
+      // Refresh the reviews list
+      await fetchFromServer();
+      Alert.alert('Success', 'Review deleted successfully');
+    } else {
+      throw new Error(responseData.error || 'Failed to delete review');
+    }
+  } catch (error) {
+    console.error('Delete error:', error);
+    Alert.alert('Error', error.message || 'Failed to delete review');
   }
 };
 
@@ -100,21 +137,20 @@ const fetchFromServer = async () => {
                   <Button
                   onPress={() =>
                     Alert.alert(
-                    'Confirm Deletion',
-                    'Are you sure you want to delete?',
-                    [
-                      {
-                        text: 'No',
-                        onPress: () => console.log('Delete cancelled'),
+                      'Confirm Deletion',
+                      'Are you sure you want to delete this review?',
+                      [
+                        {
+                          text: 'No',
+                          onPress: () => console.log('Delete cancelled'),
                           style: 'cancel',
-                      },
-                      {
-                        text:'Yes',
-                        onPress: () => console.log('Review deleted'),
-                        style: 'cancel',
-                      },
-                    ],
-                  { cancelable: true }
+                        },
+                        {
+                          text: 'Yes',
+                          onPress: () => handleDelete(item.id, item.username),
+                        },
+                      ],
+                      { cancelable: true }
                     )
                   }
                     title="Delete"
@@ -169,7 +205,7 @@ const styles = StyleSheet.create({
 const HomeScreen = () => {
   return (
     <WebView
-      source={{ uri: 'http://10.0.2.2/start.html' }}
+      source={{ uri: 'http://172.10.0.2.2/start1.html' }}
     />
   );
 };
@@ -177,7 +213,7 @@ const HomeScreen = () => {
 const AboutScreen = () => {
   return (
     <WebView
-      source={{ uri: 'http://10.0.2.2/about.html' }}
+      source={{ uri: 'http://10.0.2.2/about1.html' }}
     />
   );
 };
@@ -185,7 +221,7 @@ const AboutScreen = () => {
 const LoginScreen = () => {
   return (
     <WebView
-      source={{ uri: 'http://10.0.2.2/index.php' }}
+      source={{ uri: 'http://172.21.48.1/index.php' }}
     />
   );
 };
