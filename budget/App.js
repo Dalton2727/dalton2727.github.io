@@ -73,6 +73,54 @@ const fetchFromServer = async () => {
                       />
                     );
                   })}
+                  <Button
+                    onPress={() =>
+                      Alert.alert(
+                      'Confirm Deletion',
+                      'Are you sure you want to delete?',
+                      [
+                        {
+                          text: 'No',
+                          onPress: () => console.log('Delete cancelled'),
+                          style: 'cancel',
+                        },
+                        {
+                          text:'Yes',
+                          onPress: () => console.log('Review deleted'),
+                          style: 'cancel',
+                        },
+                      ],
+                      { cancelable: true }
+                      )
+                    }
+                    title="Edit"
+                    color="#841584"
+                    accessibilityLabel="Edit Button"
+                  />
+                  <Button
+                  onPress={() =>
+                    Alert.alert(
+                    'Confirm Deletion',
+                    'Are you sure you want to delete?',
+                    [
+                      {
+                        text: 'No',
+                        onPress: () => console.log('Delete cancelled'),
+                          style: 'cancel',
+                      },
+                      {
+                        text:'Yes',
+                        onPress: () => console.log('Review deleted'),
+                        style: 'cancel',
+                      },
+                    ],
+                  { cancelable: true }
+                    )
+                  }
+                    title="Delete"
+                    color="#841584"
+                    accessibilityLabel="Delete Button"
+                  />
                 </View>
               </View>
             )}
