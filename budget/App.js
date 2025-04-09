@@ -1,15 +1,42 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, createContext, useState, useContext } from 'react';
 import { View, Text, FlatList, Alert, StyleSheet, Button, TextInput } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { WebView } from 'react-native-webview';
 import { Ionicons } from '@expo/vector-icons';
 
+
 const Tab = createBottomTabNavigator();
+
+const UserContext = createContext();
+
+export const useUser = () => {
+  return useContext(UserContext);
+};
+
+export const UserProvider = ({ children }) => {
+  const [username, setUsername] = useState('');
+
+  const login = (user) => {
+    setUsername(user);
+  };
+
+  const logout = () => {
+    setUsername('');
+  };
+
+  return (
+    <UserContext.Provider value={{ username, login, logout }}>
+      {children}
+    </UserContext.Provider>
+  );
+};
+
 
 function ReviewsScreen() {
   const [reviewData, setReviewData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { username } = useUser(); // Get username from context
 
   const fetchFromServer = async () => {
     console.log('fetchFromServer called');
@@ -38,6 +65,7 @@ function ReviewsScreen() {
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Review Screen</Text>
+      {username && <Text style={styles.header}>User: {username}</Text>}
       {loading ? (
         <Text>Loading...</Text>
       ) : (
@@ -75,21 +103,21 @@ function ReviewsScreen() {
                   <Button
                     onPress={() =>
                       Alert.alert(
-                      'Confirm Deletion',
-                      'Are you sure you want to delete?',
-                      [
-                        {
-                          text: 'No',
-                          onPress: () => console.log('Delete cancelled'),
-                          style: 'cancel',
-                        },
-                        {
-                          text: 'Yes',
-                          onPress: () => console.log('Review deleted'),
-                          style: 'cancel',
-                        },
-                      ],
-                      { cancelable: true }
+                        'Confirm Deletion',
+                        'Are you sure you want to delete?',
+                        [
+                          {
+                            text: 'No',
+                            onPress: () => console.log('Delete cancelled'),
+                            style: 'cancel',
+                          },
+                          {
+                            text: 'Yes',
+                            onPress: () => console.log('Review deleted'),
+                            style: 'cancel',
+                          },
+                        ],
+                        { cancelable: true }
                       )
                     }
                     title="Edit"
@@ -98,21 +126,21 @@ function ReviewsScreen() {
                   <Button
                     onPress={() =>
                       Alert.alert(
-                      'Confirm Deletion',
-                      'Are you sure you want to delete?',
-                      [
-                        {
-                          text: 'No',
-                          onPress: () => console.log('Delete cancelled'),
-                          style: 'cancel',
-                        },
-                        {
-                          text: 'Yes',
-                          onPress: () => console.log('Review deleted'),
-                          style: 'cancel',
-                        },
-                      ],
-                      { cancelable: true }
+                        'Confirm Deletion',
+                        'Are you sure you want to delete?',
+                        [
+                          {
+                            text: 'No',
+                            onPress: () => console.log('Delete cancelled'),
+                            style: 'cancel',
+                          },
+                          {
+                            text: 'Yes',
+                            onPress: () => console.log('Review deleted'),
+                            style: 'cancel',
+                          },
+                        ],
+                        { cancelable: true }
                       )
                     }
                     title="Delete"
@@ -130,10 +158,12 @@ function ReviewsScreen() {
   );
 }
 
+
 const LoginScreen = ({ navigation }) => {
-  const [username, setUsername] = useState('');
+  const [inputUsername, setInputUsername] = useState(''); // Local username input state
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const { username, login, logout } = useUser(); // Access username from context
 
   const handleLogin = async () => {
     setLoading(true);
@@ -144,15 +174,16 @@ const LoginScreen = ({ navigation }) => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify({ username: inputUsername, password }),
       });
 
       const data = await response.json();
       console.log(data);
 
       if (data.success) {
+        login(data.username); // Set the username in context after successful login
         Alert.alert('Login successful', `Welcome ${data.username}`);
-        navigation.navigate('Home');
+        navigation.navigate('Reviews');
       } else {
         Alert.alert('Login failed', data.message || 'Invalid credentials');
       }
@@ -164,43 +195,65 @@ const LoginScreen = ({ navigation }) => {
     }
   };
 
+  const handleLogout = () => {
+    logout(); // Call logout function from context
+    Alert.alert('Logged out', 'You have been logged out.');
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Login</Text>
+      {username ? (
+        <Text style={styles.header}>Currently logged in as: {username}</Text> // Show username if logged in
+      ) : (
+        <>
+          {/* Username Input - Only shown before login */}
+          <TextInput
+            style={styles.input}
+            placeholder="Username"
+            value={inputUsername}
+            onChangeText={setInputUsername}
+          />
 
-      {/* Username Input */}
-      <TextInput
-        style={styles.input}
-        placeholder="Username"
-        value={username}
-        onChangeText={setUsername}
-      />
+          {/* Password Input */}
+          <TextInput
+            style={styles.input}
+            placeholder="Password"
+            secureTextEntry
+            value={password}
+            onChangeText={setPassword}
+          />
 
-      {/* Password Input */}
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
-        secureTextEntry
-        value={password}
-        onChangeText={setPassword}
-      />
-
-      {/* Login Button */}
-      <Button
-        title={loading ? 'Logging in...' : 'Login'}
-        onPress={handleLogin}
-        disabled={loading}
-      />
+          {/* Login Button */}
+          <Button
+            title={loading ? 'Logging in...' : 'Login'}
+            onPress={handleLogin}
+            disabled={loading}
+          />
+        </>
+      )}
 
       {/* Optionally, a register button */}
-      <Button
-        title="Don't have an account? Sign up"
-        onPress={() => navigation.navigate('SignUp')}
-        color="gray"
-      />
+      {!username && (
+        <Button
+          title="Don't have an account? Sign up"
+          onPress={() => navigation.navigate('SignUp')}
+          color="gray"
+        />
+      )}
+
+      {/* Logout Button - Only shown if the user is logged in */}
+      {username && (
+        <Button
+          title="Logout"
+          onPress={handleLogout}
+          color="#841584"
+        />
+      )}
     </View>
   );
 };
+
 
 const HomeScreen = () => {
   return (
@@ -216,6 +269,7 @@ const AboutScreen = () => {
 
 const App = () => {
   return (
+  <UserProvider>
     <NavigationContainer>
       <Tab.Navigator initialRouteName="Reviews">
         <Tab.Screen
@@ -246,7 +300,7 @@ const App = () => {
           }}
         />
         <Tab.Screen
-          name="Login"
+          name="Login/Out"
           component={LoginScreen}
           options={{
             tabBarIcon: ({ focused, color, size }) => (
@@ -256,6 +310,7 @@ const App = () => {
         />
       </Tab.Navigator>
     </NavigationContainer>
+   </UserProvider>
   );
 };
 
@@ -299,3 +354,5 @@ const styles = StyleSheet.create({
     marginTop: 4,
   }
 });
+
+export default App;
