@@ -126,6 +126,14 @@ const HomeScreen = () => {
   );
 };
 
+const AboutScreen = () => {
+  return (
+    <WebView
+      source={{ uri: 'http://10.0.2.2/about.html' }}
+    />
+  );
+};
+
 export default function App() {
   return (
     <NavigationContainer>
@@ -152,6 +160,13 @@ export default function App() {
           ),
         }}
       />
+      <Tab.Screen name="About" component={AboutScreen}
+        options={{
+         tabBarIcon: ({focused, color, size }) => (
+            <Ionicons name={focused ? 'bulb' : 'bulb-outline' } size={size} color={color} />
+         ),
+        }}
+       />
       </Tab.Navigator>
     </NavigationContainer>
   );
