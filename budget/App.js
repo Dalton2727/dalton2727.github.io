@@ -182,6 +182,14 @@ const AboutScreen = () => {
   );
 };
 
+const LoginScreen = () => {
+  return (
+    <WebView
+      source={{ uri: 'http://10.0.2.2/index.php' }}
+    />
+  );
+};
+
 export default function App() {
   return (
     <NavigationContainer>
@@ -212,6 +220,13 @@ export default function App() {
         options={{
          tabBarIcon: ({focused, color, size }) => (
             <Ionicons name={focused ? 'bulb' : 'bulb-outline' } size={size} color={color} />
+         ),
+        }}
+       />
+      <Tab.Screen name="Login" component={LoginScreen}
+        options={{
+         tabBarIcon: ({focused, color, size }) => (
+            <Ionicons name={focused ? 'log-in' : 'log-in-outline' } size={size} color={color} />
          ),
         }}
        />
