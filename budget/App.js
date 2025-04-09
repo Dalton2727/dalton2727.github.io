@@ -1,7 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, Alert, StyleSheet } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { WebView } from 'react-native-webview';
 
-export default function ReviewsScreen() {
+const Tab = createBottomTabNavigator();
+
+function ReviewsScreen() {
   const [reviewData, setReviewData] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -84,3 +89,37 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
 });
+
+const HomeScreen = () => {
+  return (
+    <WebView
+      source={{ uri: 'http://10.0.2.2/start.html' }}
+    />
+  );
+};
+
+export default function App() {
+  return (
+    <NavigationContainer>
+      <Tab.Navigator
+        initialRouteName="Reviews"
+        screenOptions={({ route }) => ({
+          tabBarIcon: ({ focused, color}) => {
+            let label;
+
+            if (route.name === 'Home') {
+              label = 'Home';
+            } else if (route.name === 'Reviews') {
+              label = 'Reviews';
+            }
+
+            return <Text style={{ color: focused ? '#f5a623' : color, fontSize: 16 }}>{label}</Text>;
+          },
+        })}
+      >
+        <Tab.Screen name="Home" component={HomeScreen} />
+        <Tab.Screen name="Reviews" component={ReviewsScreen} />
+      </Tab.Navigator>
+    </NavigationContainer>
+  );
+}
