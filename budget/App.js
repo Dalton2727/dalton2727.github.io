@@ -3,6 +3,7 @@ import { View, Text, FlatList, Alert, StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { WebView } from 'react-native-webview';
+import { Ionicons } from '@expo/vector-icons';
 
 const Tab = createBottomTabNavigator();
 
@@ -49,7 +50,30 @@ const fetchFromServer = async () => {
                 <Text style={styles.username}>User: {item.username}</Text>
                 <Text> Location: {item.location}</Text>
                 <Text> Meal Item: {item.meal}</Text>
-                <Text> Rating: {item.rating}/10</Text>
+                <View style={styles.ratingRow}>
+                  <Text> Rating: </Text>
+                  {[...Array(10)].map((_, i) => {
+                    // Conditional check for location
+                    let iconName = 'fast-food-outline'; // Default icon
+
+                    if (item.location === 'RBC') {
+                      iconName = i < item.rating ? 'cafe' : 'cafe-outline';
+                    } else if (item.location === 'WesWings') {
+                      iconName = i < item.rating ? 'fast-food' : 'fast-food-outline';
+                    } else {
+                      iconName = i < item.rating ? 'restaurant' : 'restaurant-outline'; 
+                    }
+
+                    return (
+                      <Ionicons
+                        key={i}
+                        name={iconName}
+                        size={18}
+                        color={i < item.rating ? '#edc811' : '#ccc'}
+                      />
+                    );
+                  })}
+                </View>
               </View>
             )}
           />
@@ -88,6 +112,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginBottom: 4,
   },
+  ratingRow: {
+    flexDirection: 'row',
+    marginTop: 4,
+  }
 });
 
 const HomeScreen = () => {
@@ -105,20 +133,25 @@ export default function App() {
         initialRouteName="Reviews"
         screenOptions={({ route }) => ({
           tabBarIcon: ({ focused, color}) => {
-            let label;
-
-            if (route.name === 'Home') {
-              label = 'Home';
-            } else if (route.name === 'Reviews') {
-              label = 'Reviews';
-            }
-
-            return <Text style={{ color: focused ? '#f5a623' : color, fontSize: 16 }}>{label}</Text>;
+            let iconName;
+            return <Ionicons name={iconName} size={size} color={color} />;
           },
         })}
       >
-        <Tab.Screen name="Home" component={HomeScreen} />
-        <Tab.Screen name="Reviews" component={ReviewsScreen} />
+        <Tab.Screen name="Home" component={HomeScreen}
+          options={{
+            tabBarIcon: ({ focused, color, size }) => (
+              <Ionicons name={focused ? 'home' : 'home-outline'} size={size} color={color} />
+            ),
+          }}
+        />
+        <Tab.Screen name="Reviews" component={ReviewsScreen}
+        options={{
+          tabBarIcon: ({ focused, color, size }) => (
+            <Ionicons name={focused ? 'chatbubbles' : 'chatbubbles-outline'} size={size} color={color} />
+          ),
+        }}
+      />
       </Tab.Navigator>
     </NavigationContainer>
   );
