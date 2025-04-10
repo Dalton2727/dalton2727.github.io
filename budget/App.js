@@ -1,4 +1,3 @@
-
 import React, { useEffect, createContext, useState, useContext } from 'react';
 import { View, Text, FlatList, Alert, StyleSheet, Button, TextInput } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
@@ -291,6 +290,119 @@ const LoginScreen = ({ navigation }) => {
   );
 };
 
+const SignUpScreen = ({ navigation }) => {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const handleSignUp = async () => {
+    if (password !== confirmPassword) {
+      Alert.alert('Error', 'Passwords do not match');
+      return;
+    }
+
+    if (password.length < 10) {
+       Alert.alert('Error', 'Password must be at least 10 characters long');
+       return;
+    }
+
+    setLoading(true);
+
+    try {
+      const response = await fetch('http://10.0.2.2/index2.php/user/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username,
+          password,
+        }),
+      });
+
+      // Check if the response status is OK (status code 2xx)
+      if (!response.ok) {
+        throw new Error(`Server responded with status: ${response.status}`);
+      }
+
+      // Log the raw response to check what the server is sending back
+      const responseText = await response.text();  // Get raw response as text
+      console.log('Response Text:', responseText);
+
+      // Now try to parse it as JSON
+      const data = JSON.parse(responseText);  // Manually parse the text to JSON
+
+      console.log('SignUp Response:', data);
+
+      if (data.success) {
+        Alert.alert('Sign Up Successful', 'You can now log in.');
+        navigation.navigate('Reviews');
+      } else {
+        Alert.alert('Sign Up Failed', data.message || 'There was an error during sign up');
+      }
+    } catch (error) {
+      // Check if the error has a message, otherwise log the entire error object
+      if (error instanceof Error) {
+        console.error('Sign Up Error:', error.message);
+      } else {
+        console.error('Sign Up Error:', error);  // Log the full error if it’s not an instance of Error
+      }
+      Alert.alert('Error', 'There was an issue with the sign-up request.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
+  return (
+    <View style={styles.container}>
+      <Text style={styles.header}>Sign Up</Text>
+
+      {/* Username Input */}
+      <TextInput
+        style={styles.input}
+        placeholder="Username"
+        value={username}
+        onChangeText={setUsername}
+      />
+
+      {/* Password Input */}
+      <TextInput
+        style={styles.input}
+        placeholder="Password"
+        secureTextEntry
+        value={password}
+        onChangeText={setPassword}
+      />
+
+      {/* Confirm Password Input */}
+      <TextInput
+        style={styles.input}
+        placeholder="Confirm Password"
+        secureTextEntry
+        value={confirmPassword}
+        onChangeText={setConfirmPassword}
+      />
+
+      {/* Sign Up Button */}
+      <Button
+        title={loading ? 'Signing Up...' : 'Sign Up'}
+        onPress={handleSignUp}
+        disabled={loading}
+      />
+
+      {/* Navigate to Login */}
+      <Button
+        title="Already have an account? Login"
+        onPress={() => navigation.navigate('Login/Out')}
+        color="gray"
+      />
+    </View>
+  );
+};
+
+
 
 const HomeScreen = () => {
   return (
@@ -345,6 +457,15 @@ const App = () => {
             ),
           }}
         />
+          <Tab.Screen
+            name="Sign Up"
+            component={SignUpScreen} // Add the SignUpScreen to the navigator
+            options={{
+              tabBarIcon: ({ focused, color, size }) => (
+                <Ionicons name={focused ? 'person-add' : 'person-add-outline'} size={size} color={color} />
+              ),
+            }}
+          />
       </Tab.Navigator>
     </NavigationContainer>
    </UserProvider>
@@ -392,3 +513,4 @@ const styles = StyleSheet.create({
   }
 });
 
+export default App;
