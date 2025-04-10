@@ -1,3 +1,4 @@
+
 import React, { useEffect, createContext, useState, useContext } from 'react';
 import { View, Text, FlatList, Alert, StyleSheet, Button, TextInput } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
@@ -57,6 +58,43 @@ function ReviewsScreen() {
       setLoading(false);
     }
   };
+
+const handleDelete = async (reviewId, username) => {
+  try {
+    console.log('Attempting to delete review with ID:', reviewId, 'for user:', username);
+    
+    const formData = new FormData();
+    formData.append('revid', reviewId);
+    formData.append('userid', username);
+    
+    const response = await fetch('http://10.0.2.2/delete_review_api.php', {
+      method: 'POST',
+      body: formData,
+    });
+
+    console.log('Delete response status:', response.status);
+    
+    // Check if the response is not OK
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || 'Failed to delete review');
+    }
+
+    const responseData = await response.json();
+    console.log('Delete response:', responseData);
+
+    if (responseData.success) {
+      // Refresh the reviews list
+      await fetchFromServer();
+      Alert.alert('Success', 'Review deleted successfully');
+    } else {
+      throw new Error(responseData.error || 'Failed to delete review');
+    }
+  } catch (error) {
+    console.error('Delete error:', error);
+    Alert.alert('Error', error.message || 'Failed to delete review');
+  }
+};
 
   useEffect(() => {
     fetchFromServer();
@@ -124,25 +162,24 @@ function ReviewsScreen() {
                     color="#841584"
                   />
                   <Button
-                    onPress={() =>
-                      Alert.alert(
-                        'Confirm Deletion',
-                        'Are you sure you want to delete?',
-                        [
-                          {
-                            text: 'No',
-                            onPress: () => console.log('Delete cancelled'),
-                            style: 'cancel',
-                          },
-                          {
-                            text: 'Yes',
-                            onPress: () => console.log('Review deleted'),
-                            style: 'cancel',
-                          },
-                        ],
-                        { cancelable: true }
-                      )
-                    }
+                  onPress={() =>
+                    Alert.alert(
+                      'Confirm Deletion',
+                      'Are you sure you want to delete this review?',
+                      [
+                        {
+                          text: 'No',
+                          onPress: () => console.log('Delete cancelled'),
+                          style: 'cancel',
+                        },
+                        {
+                          text: 'Yes',
+                          onPress: () => handleDelete(item.id, item.username),
+                        },
+                      ],
+                      { cancelable: true }
+                    )
+                  }
                     title="Delete"
                     color="#841584"
                   />
@@ -355,4 +392,3 @@ const styles = StyleSheet.create({
   }
 });
 
-export default App;
