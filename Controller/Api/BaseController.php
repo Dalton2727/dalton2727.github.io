@@ -1,6 +1,14 @@
 <?php
 class BaseController
 {
+    public function __construct()
+    {
+        // Start session if not already started
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+    }
+
     /** 
 * __call magic method. 
 */
@@ -36,7 +44,7 @@ class BaseController
 */
     protected function sendOutput($data, $httpHeaders=array())
     {
-        header_remove('Set-Cookie');
+        // Don't remove Set-Cookie header
         if (is_array($httpHeaders) && count($httpHeaders)) {
             foreach ($httpHeaders as $httpHeader) {
                 header($httpHeader);

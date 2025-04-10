@@ -9,13 +9,16 @@ class UserModel extends Database
     public function getUsers($limit)
     {
         try {
+            error_log("Attempting to fetch reviews with limit: " . $limit);
             // Perform the database query and fetch results
             $query = "SELECT * FROM reviews LIMIT ?";
             $params = [['i', $limit]];
             $result = $this->select($query, $params);
+            error_log("Query result: " . print_r($result, true));
             return $result;  // Ensure this is always an array
         } catch (Exception $e) {
-            // Handle the exception or return an empty array
+            error_log("Error in getUsers: " . $e->getMessage());
+            // Return an empty array instead of null to prevent JSON encoding issues
             return [];
         }
     }
@@ -79,6 +82,33 @@ class UserModel extends Database
     }
 }
 
-    
+    /**
+     * Delete a review from the database.
+     */
+    public function deleteReview($revid, $userid)
+    {
+        try {
+            // First verify the review exists and belongs to the user
+            $result = $this->select(
+                "SELECT * FROM reviews WHERE username = ? AND id = ?",
+                [['s', $userid], ['i', $revid]]
+            );
+
+            if (empty($result)) {
+                return false;
+            }
+
+            // Delete the review
+            $this->execute(
+                "DELETE FROM reviews WHERE id = ? AND username = ?",
+                [['i', $revid], ['s', $userid]]
+            );
+
+            return true;
+        } catch (Exception $e) {
+            error_log("Error in deleteReview: " . $e->getMessage());
+            return false;
+        }
+    }
 }
 ?>

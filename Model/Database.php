@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/../inc/config.php';
+
 class Database
 {
     protected $connection = null;
@@ -6,13 +8,17 @@ class Database
     public function __construct()
     {
         try {
+            error_log("Attempting to connect to database with host: " . DB_HOST);
             // Establish database connection
             $this->connection = new mysqli(DB_HOST, DB_USERNAME, DB_PASSWORD, DB_DATABASE_NAME);
 
             if (mysqli_connect_errno()) {
-                throw new Exception("Could not connect to database.");
+                throw new Exception("Could not connect to database: " . mysqli_connect_error());
             }
+            
+            error_log("Database connection successful");
         } catch (Exception $e) {
+            error_log("Database connection error: " . $e->getMessage());
             throw new Exception($e->getMessage());
         }
     }
@@ -23,6 +29,9 @@ class Database
     public function select($query = "", $params = [])
     {
         try {
+            error_log("Executing select query: " . $query);
+            error_log("With parameters: " . print_r($params, true));
+            
             // Execute query with parameters
             $stmt = $this->executeStatement($query, $params);
             
