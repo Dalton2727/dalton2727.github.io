@@ -41,7 +41,12 @@ function ReviewsScreen() {
   const fetchFromServer = async () => {
     console.log('fetchFromServer called');
     try {
-      const response = await fetch('http://10.0.2.2/index2.php/user/list');
+      const response = await fetch('http://172.21.48.1/index2.php/user/list', {
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      });
       console.log('Response received:', response.status);
 
       if (!response.ok) throw new Error(`HTTP status ${response.status}`);
@@ -58,42 +63,64 @@ function ReviewsScreen() {
     }
   };
 
-const handleDelete = async (reviewId, username) => {
-  try {
-    console.log('Attempting to delete review with ID:', reviewId, 'for user:', username);
-    
-    const formData = new FormData();
-    formData.append('revid', reviewId);
-    formData.append('userid', username);
-    
-    const response = await fetch('http://10.0.2.2/delete_review_api.php', {
-      method: 'POST',
-      body: formData,
-    });
+  const handleDelete = async (reviewId, reviewUsername) => {
+    try {
+      if (!username) {
+        Alert.alert('Error', 'You must be logged in to delete reviews');
+        return;
+      }
 
-    console.log('Delete response status:', response.status);
-    
-    // Check if the response is not OK
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.error || 'Failed to delete review');
+      if (username !== reviewUsername) {
+        Alert.alert('Error', 'You can only delete your own reviews');
+        return;
+      }
+
+      console.log('Attempting to delete review with ID:', reviewId, 'for user:', username);
+      console.log('Current session username:', username);
+      
+      const response = await fetch(`http://172.21.48.1/index2.php/user/delete`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({
+          revid: reviewId,
+          userid: username
+        })
+      });
+
+      console.log('Delete response status:', response.status);
+      console.log('Delete response headers:', response.headers);
+      
+      const responseText = await response.text();
+      console.log('Raw response text:', responseText);
+
+      let responseData;
+      try {
+        responseData = JSON.parse(responseText);
+        console.log('Parsed response data:', responseData);
+      } catch (parseError) {
+        console.error('Failed to parse response as JSON:', parseError);
+        throw new Error('Invalid response from server: ' + responseText);
+      }
+
+      if (!response.ok) {
+        throw new Error(responseData.error || 'Failed to delete review');
+      }
+
+      if (responseData.success) {
+        await fetchFromServer();
+        Alert.alert('Success', 'Review deleted successfully');
+      } else {
+        throw new Error(responseData.error || 'Failed to delete review');
+      }
+    } catch (error) {
+      console.error('Delete error:', error);
+      Alert.alert('Error', error.message || 'Failed to delete review');
     }
-
-    const responseData = await response.json();
-    console.log('Delete response:', responseData);
-
-    if (responseData.success) {
-      // Refresh the reviews list
-      await fetchFromServer();
-      Alert.alert('Success', 'Review deleted successfully');
-    } else {
-      throw new Error(responseData.error || 'Failed to delete review');
-    }
-  } catch (error) {
-    console.error('Delete error:', error);
-    Alert.alert('Error', error.message || 'Failed to delete review');
-  }
-};
+  };
 
   useEffect(() => {
     fetchFromServer();
@@ -205,27 +232,28 @@ const LoginScreen = ({ navigation }) => {
     setLoading(true);
 
     try {
-      const response = await fetch('http://10.0.2.2/index2.php/user/login', {
+      const response = await fetch('http://172.21.48.1/index2.php/user/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include',
         body: JSON.stringify({ username: inputUsername, password }),
       });
 
       const data = await response.json();
-      console.log(data);
+      console.log('Login response:', data);
 
       if (data.success) {
-        login(data.username); // Set the username in context after successful login
-        Alert.alert('Login successful', `Welcome ${data.username}`);
+        login(inputUsername);
+        Alert.alert('Login successful', `Welcome ${inputUsername}`);
         navigation.navigate('Reviews');
       } else {
         Alert.alert('Login failed', data.message || 'Invalid credentials');
       }
     } catch (error) {
-      console.error('Login error:', error.message);
-      Alert.alert('Error', 'There was an issue with the login request.');
+      console.error('Login error:', error);
+      Alert.alert('Error', 'Failed to login');
     } finally {
       setLoading(false);
     }
@@ -303,14 +331,14 @@ const SignUpScreen = ({ navigation }) => {
     }
 
     if (password.length < 10) {
-       Alert.alert('Error', 'Password must be at least 10 characters long');
-       return;
+      Alert.alert('Error', 'Password must be at least 10 characters long');
+      return;
     }
 
     setLoading(true);
 
     try {
-      const response = await fetch('http://10.0.2.2/index2.php/user/signup', {
+      const response = await fetch('http://172.21.48.1/index2.php/user/signup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -321,18 +349,14 @@ const SignUpScreen = ({ navigation }) => {
         }),
       });
 
-      // Check if the response status is OK (status code 2xx)
       if (!response.ok) {
         throw new Error(`Server responded with status: ${response.status}`);
       }
 
-      // Log the raw response to check what the server is sending back
-      const responseText = await response.text();  // Get raw response as text
+      const responseText = await response.text();
       console.log('Response Text:', responseText);
 
-      // Now try to parse it as JSON
-      const data = JSON.parse(responseText);  // Manually parse the text to JSON
-
+      const data = JSON.parse(responseText);
       console.log('SignUp Response:', data);
 
       if (data.success) {
@@ -342,11 +366,10 @@ const SignUpScreen = ({ navigation }) => {
         Alert.alert('Sign Up Failed', data.message || 'There was an error during sign up');
       }
     } catch (error) {
-      // Check if the error has a message, otherwise log the entire error object
       if (error instanceof Error) {
         console.error('Sign Up Error:', error.message);
       } else {
-        console.error('Sign Up Error:', error);  // Log the full error if it’s not an instance of Error
+        console.error('Sign Up Error:', error);
       }
       Alert.alert('Error', 'There was an issue with the sign-up request.');
     } finally {
@@ -406,13 +429,13 @@ const SignUpScreen = ({ navigation }) => {
 
 const HomeScreen = () => {
   return (
-    <WebView source={{ uri: 'http://10.0.2.2/start1.html' }} />
+    <WebView source={{ uri: 'http://172.21.48.1/start1.html' }} />
   );
 };
 
 const AboutScreen = () => {
   return (
-    <WebView source={{ uri: 'http://10.0.2.2/about1.html' }} />
+    <WebView source={{ uri: 'http://172.21.48.1/about1.html' }} />
   );
 };
 
