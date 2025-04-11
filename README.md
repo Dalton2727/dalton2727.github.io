@@ -6,8 +6,9 @@ The work for this project was split 50/50
 
 <img width="1085" alt="image" src="https://github.com/user-attachments/assets/192a395f-5754-4314-9a64-40ea8d5566d1" />
 <img width="908" alt="image" src="https://github.com/user-attachments/assets/999d6370-21d7-4070-9734-371e55677c89" />
-<img width="1001" alt="Screenshot 2025-04-11 at 1 14 11 AM" src="https://github.com/user-attachmen<img width="1013" />
 
+<img width="851" alt="Screenshot 2025-04-11 at 1 18 17 AM" src="https://github.com/user-attachments/assets/de69c331-fd0f-40c7-852d-418e03bf5042" />
+<img width="733" alt="Screenshot 2025-04-11 at 1 18 54 AM" src="https://github.com/user-attachments/assets/2becc7df-1d08-4248-947b-0bd3634cc9a9" />
 
 <img width="1439" alt="Screenshot 2025-03-07 at 6 45 21 PM" src="https://github.com/user-attachments/assets/46525793-7d5a-4b18-a57c-982cd398ba82" />
 
