@@ -43,16 +43,13 @@ function ReviewsScreen() {
     meal: '',
     rating: ''
   });
+  const [location, setLocation] = useState('');
+  const [meal, setMeal] = useState('');
+  const [rating, setRating] = useState('');
 
   const fetchFromServer = async () => {
     console.log('fetchFromServer called');
     try {
-      const response = await fetch('http://172.21.48.1/index2.php/user/list', {
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-        }
-      });
       console.log('Response received:', response.status);
 
       if (!response.ok) throw new Error(`HTTP status ${response.status}`);
@@ -96,6 +93,11 @@ function ReviewsScreen() {
           userid: username
         })
       });
+const handleAddReview = async () => {
+  if (!username) {
+    Alert.alert('Error', 'You must be logged in to submit a review.');
+    return;
+  }
 
       console.log('Delete response status:', response.status);
       console.log('Delete response headers:', response.headers);
@@ -111,10 +113,27 @@ function ReviewsScreen() {
         console.error('Failed to parse response as JSON:', parseError);
         throw new Error('Invalid response from server: ' + responseText);
       }
+  if (!location || !meal || !rating) {
+    Alert.alert('Error', 'Please fill in all fields.');
+    return;
+  }
 
       if (!response.ok) {
         throw new Error(responseData.error || 'Failed to delete review');
       }
+  try {
+    const response = await fetch('http://10.0.2.2/index2.php/user/addreview', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        username,
+        location,
+        meal,
+        rating: parseInt(rating),
+      }),
+    });
 
       if (responseData.success) {
         await fetchFromServer();
@@ -127,13 +146,22 @@ function ReviewsScreen() {
       Alert.alert('Error', error.message || 'Failed to delete review');
     }
   };
+    const text = await response.text();
+    console.log('Raw response text:', text);
 
   const handleEdit = async (reviewId, reviewUsername) => {
+    let data;
     try {
       if (!username) {
         Alert.alert('Error', 'You must be logged in to edit reviews');
         return;
       }
+      data = JSON.parse(text);
+    } catch (parseError) {
+      console.error('Failed to parse JSON:', parseError.message);
+      Alert.alert('Error', 'Invalid JSON response from server.');
+      return;
+    }
 
       if (username !== reviewUsername) {
         Alert.alert('Error', 'You can only edit your own reviews');
@@ -145,6 +173,19 @@ function ReviewsScreen() {
         Alert.alert('Error', 'Rating must be between 1 and 10');
         return;
       }
+    if (data.success) {
+      Alert.alert('Success', 'Review submitted');
+      setLocation('');
+      setMeal('');
+      setRating('');
+      fetchFromServer(); // refresh
+    } else {
+      throw new Error(data.message || 'Failed to add review');
+    }
+  } catch (error) {
+    Alert.alert('Error', error.message || 'Failed to add review');
+  }
+}; // <-- Properly close handleAddReview here
 
       console.log('Attempting to edit review with ID:', reviewId, 'for user:', username);
       
@@ -163,6 +204,10 @@ function ReviewsScreen() {
           rating: editForm.rating
         })
       });
+// Now define handleDelete separately
+const handleDelete = async (reviewId, username) => {
+  try {
+    console.log('Attempting to delete review with ID:', reviewId, 'for user:', username);
 
       console.log('Edit response status:', response.status);
       
@@ -177,10 +222,17 @@ function ReviewsScreen() {
         console.error('Failed to parse response as JSON:', parseError);
         throw new Error('Invalid response from server: ' + responseText);
       }
+    const formData = new FormData();
+    formData.append('revid', reviewId);
+    formData.append('userid', username);
 
       if (!response.ok) {
         throw new Error(responseData.error || 'Failed to edit review');
       }
+    const response = await fetch('http://10.0.2.2/delete_review_api.php', {
+      method: 'POST',
+      body: formData,
+    });
 
       if (responseData.success) {
         await fetchFromServer();
@@ -193,6 +245,9 @@ function ReviewsScreen() {
     } catch (error) {
       console.error('Edit error:', error);
       Alert.alert('Error', error.message || 'Failed to edit review');
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || 'Failed to delete review');
     }
   };
 
@@ -201,11 +256,23 @@ function ReviewsScreen() {
       Alert.alert('Error', 'You must be logged in to edit reviews');
       return;
     }
+    const responseData = await response.json();
+    console.log('Delete response:', responseData);
 
     if (username !== review.username) {
       Alert.alert('Error', 'You can only edit your own reviews');
       return;
+    if (responseData.success) {
+      await fetchFromServer();
+      Alert.alert('Success', 'Review deleted successfully');
+    } else {
+      throw new Error(responseData.error || 'Failed to delete review');
     }
+  } catch (error) {
+    console.error('Delete error:', error);
+    Alert.alert('Error', error.message || 'Failed to delete review');
+  }
+};
 
     setEditingReview(review.id);
     setEditForm({
@@ -228,6 +295,30 @@ function ReviewsScreen() {
     <View style={styles.container}>
       <Text style={styles.header}>Review Screen</Text>
       {username && <Text style={styles.header}>User: {username}</Text>}
+      {username && (
+              <View style={{ marginBottom: 20 }}>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Location"
+                  value={location}
+                  onChangeText={setLocation}
+                />
+                <TextInput
+                  style={styles.input}
+                  placeholder="Meal Item"
+                  value={meal}
+                  onChangeText={setMeal}
+                />
+                <TextInput
+                  style={styles.input}
+                  placeholder="Rating (1-10)"
+                  keyboardType="numeric"
+                  value={rating}
+                  onChangeText={setRating}
+                />
+                <Button title="Submit Review" onPress={handleAddReview} />
+              </View>
+            )}
       {loading ? (
         <Text>Loading...</Text>
       ) : (
@@ -318,6 +409,54 @@ function ReviewsScreen() {
                     </View>
                   </View>
                 )}
+                    );
+                  })}
+                  <Button
+                    onPress={() =>
+                      Alert.alert(
+                        'Confirm Deletion',
+                        'Are you sure you want to delete?',
+                        [
+                          {
+                            text: 'No',
+                            onPress: () => console.log('Delete cancelled'),
+                            style: 'cancel',
+                          },
+                          {
+                            text: 'Yes',
+                            onPress: () => console.log('Review deleted'),
+                            style: 'cancel',
+                          },
+                        ],
+                        { cancelable: true }
+                      )
+                    }
+                    title="Edit"
+                    color="#841584"
+                  />
+                  <Button
+                  onPress={() =>
+                    Alert.alert(
+                      'Confirm Deletion',
+                      'Are you sure you want to delete this review?',
+                      [
+                        {
+                          text: 'No',
+                          onPress: () => console.log('Delete cancelled'),
+                          style: 'cancel',
+                        },
+                        {
+                          text: 'Yes',
+                          onPress: () => handleDelete(item.id, item.username),
+                        },
+                      ],
+                      { cancelable: true }
+                    )
+                  }
+                    title="Delete"
+                    color="#841584"
+                  />
+                </View>
               </View>
             )}
           />
@@ -340,28 +479,27 @@ const LoginScreen = ({ navigation }) => {
     setLoading(true);
 
     try {
-      const response = await fetch('http://172.21.48.1/index2.php/user/login', {
+      const response = await fetch('http://10.0.2.2/index2.php/user/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        credentials: 'include',
         body: JSON.stringify({ username: inputUsername, password }),
       });
 
       const data = await response.json();
-      console.log('Login response:', data);
+      console.log(data);
 
       if (data.success) {
-        login(inputUsername);
-        Alert.alert('Login successful', `Welcome ${inputUsername}`);
+        login(data.username); // Set the username in context after successful login
+        Alert.alert('Login successful', `Welcome ${data.username}`);
         navigation.navigate('Reviews');
       } else {
         Alert.alert('Login failed', data.message || 'Invalid credentials');
       }
     } catch (error) {
-      console.error('Login error:', error);
-      Alert.alert('Error', 'Failed to login');
+      console.error('Login error:', error.message);
+      Alert.alert('Error', 'There was an issue with the login request.');
     } finally {
       setLoading(false);
     }
@@ -409,7 +547,7 @@ const LoginScreen = ({ navigation }) => {
       {!username && (
         <Button
           title="Don't have an account? Sign up"
-          onPress={() => navigation.navigate('SignUp')}
+          onPress={() => navigation.navigate('Sign Up')}
           color="gray"
         />
       )}
@@ -439,14 +577,14 @@ const SignUpScreen = ({ navigation }) => {
     }
 
     if (password.length < 10) {
-      Alert.alert('Error', 'Password must be at least 10 characters long');
-      return;
+       Alert.alert('Error', 'Password must be at least 10 characters long');
+       return;
     }
 
     setLoading(true);
 
     try {
-      const response = await fetch('http://172.21.48.1/index2.php/user/signup', {
+      const response = await fetch('http://10.0.2.2/index2.php/user/signup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -457,14 +595,18 @@ const SignUpScreen = ({ navigation }) => {
         }),
       });
 
+      // Check if the response status is OK (status code 2xx)
       if (!response.ok) {
         throw new Error(`Server responded with status: ${response.status}`);
       }
 
-      const responseText = await response.text();
+      // Log the raw response to check what the server is sending back
+      const responseText = await response.text();  // Get raw response as text
       console.log('Response Text:', responseText);
 
-      const data = JSON.parse(responseText);
+      // Now try to parse it as JSON
+      const data = JSON.parse(responseText);  // Manually parse the text to JSON
+
       console.log('SignUp Response:', data);
 
       if (data.success) {
@@ -474,10 +616,11 @@ const SignUpScreen = ({ navigation }) => {
         Alert.alert('Sign Up Failed', data.message || 'There was an error during sign up');
       }
     } catch (error) {
+      // Check if the error has a message, otherwise log the entire error object
       if (error instanceof Error) {
         console.error('Sign Up Error:', error.message);
       } else {
-        console.error('Sign Up Error:', error);
+        console.error('Sign Up Error:', error);  // Log the full error if it’s not an instance of Error
       }
       Alert.alert('Error', 'There was an issue with the sign-up request.');
     } finally {
@@ -537,13 +680,13 @@ const SignUpScreen = ({ navigation }) => {
 
 const HomeScreen = () => {
   return (
-    <WebView source={{ uri: 'http://172.21.48.1/start1.html' }} />
+    <WebView source={{ uri: 'http://10.0.2.2/start1.html' }} />
   );
 };
 
 const AboutScreen = () => {
   return (
-    <WebView source={{ uri: 'http://172.21.48.1/about1.html' }} />
+    <WebView source={{ uri: 'http://10.0.2.2/about1.html' }} />
   );
 };
 
