@@ -108,6 +108,16 @@ class UserModel extends Database
         } catch (Exception $e) {
             error_log("Error in deleteReview: " . $e->getMessage());
             return false;
+public function insertReview($username, $location, $meal, $rating)
+{
+    try {
+        // Validate rating
+        $rating = filter_var($rating, FILTER_VALIDATE_INT, [
+            'options' => ['min_range' => 1, 'max_range' => 10]
+        ]);
+        
+        if ($rating === false) {
+            throw new InvalidArgumentException("Invalid rating value");
         }
     }
 
@@ -144,6 +154,22 @@ class UserModel extends Database
             error_log("Error in editReview: " . $e->getMessage());
             return false;
         }
+        return $this->execute(
+            "INSERT INTO reviews (username, location, meal, rating) 
+             VALUES (?, ?, ?, ?)",
+            [
+                ['s', trim($username)],
+                ['s', trim($location)],
+                ['s', trim($meal)],
+                ['i', $rating]
+            ]
+        );
+    } catch (Exception $e) {
+        error_log("insertReview error: " . $e->getMessage());
+        return false;
     }
+}
+
+    
 }
 ?>
