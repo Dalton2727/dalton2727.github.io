@@ -119,10 +119,27 @@ const handleAddReview = async () => {
         console.error('Failed to parse response as JSON:', parseError);
         throw new Error('Invalid response from server: ' + responseText);
       }
+  if (!location || !meal || !rating) {
+    Alert.alert('Error', 'Please fill in all fields.');
+    return;
+  }
 
       if (!response.ok) {
         throw new Error(responseData.error || 'Failed to delete review');
       }
+  try {
+    const response = await fetch('http://10.0.2.2/index2.php/user/addreview', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        username,
+        location,
+        meal,
+        rating: parseInt(rating),
+      }),
+    });
 
       if (responseData.success) {
         await fetchFromServer();
