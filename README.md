@@ -14,8 +14,8 @@ The work for this project was split 50/50
 
 <img width="1470" alt="Screenshot 2025-03-07 at 11 37 08 PM" src="https://github.com/user-attachments/assets/5879ae59-fd49-43c4-8505-22db066df650" />
 
-We hard-coded our IP address in lines: 54, 87, 143, 206, 438, 543, 639, 645 of the App.js file
-(all hard coding now has the adress 10.0.2.2)
+We hard-coded our IP address in lines: 55, 89, 146, 210, 447, 552, 648, 654 of the App.js file
+(all hard coding now has the adress 10.0.2.2 for android emulator)
 
 We used AI for general debugging and help with formatting/styling as well as the CORS functionality
 
