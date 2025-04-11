@@ -152,13 +152,22 @@ const handleAddReview = async () => {
       Alert.alert('Error', error.message || 'Failed to delete review');
     }
   };
+    const text = await response.text();
+    console.log('Raw response text:', text);
 
   const handleEdit = async (reviewId, reviewUsername) => {
+    let data;
     try {
       if (!username) {
         Alert.alert('Error', 'You must be logged in to edit reviews');
         return;
       }
+      data = JSON.parse(text);
+    } catch (parseError) {
+      console.error('Failed to parse JSON:', parseError.message);
+      Alert.alert('Error', 'Invalid JSON response from server.');
+      return;
+    }
 
       if (username !== reviewUsername) {
         Alert.alert('Error', 'You can only edit your own reviews');
