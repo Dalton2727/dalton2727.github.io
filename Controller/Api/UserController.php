@@ -9,42 +9,42 @@ class UserController extends BaseController
         $strErrorDesc = '';
         $requestMethod = $_SERVER["REQUEST_METHOD"];
         $arrQueryStringParams = $this->getQueryStringParams();
-        
-        try {
-            if (strtoupper($requestMethod) == 'GET') {
+
+        if (strtoupper($requestMethod) == 'GET') {
+            try {
                 $userModel = new UserModel();
                 $intLimit = 10;
                 if (isset($arrQueryStringParams['limit']) && $arrQueryStringParams['limit']) {
                     $intLimit = $arrQueryStringParams['limit'];
                 }
-                
+
                 error_log("Attempting to fetch reviews with limit: " . $intLimit);
                 $arrUsers = $userModel->getUsers($intLimit);
-                
+
                 if ($arrUsers === null) {
                     throw new Exception("Failed to fetch reviews from database");
                 }
-                
+
                 $responseData = json_encode($arrUsers);
                 $this->sendOutput(
                     $responseData,
                     array('Content-Type: application/json', 'HTTP/1.1 200 OK')
                 );
                 return;
-            } else {
-                throw new Exception('Method not supported');
+            } catch (Exception $e) {
+                error_log("Error in listAction: " . $e->getMessage());
+                $strErrorDesc = $e->getMessage();
+                $strErrorHeader = 'HTTP/1.1 500 Internal Server Error';
             }
-        } catch (Exception $e) {
-            error_log("Error in listAction: " . $e->getMessage());
-            $strErrorDesc = $e->getMessage();
-            $strErrorHeader = 'HTTP/1.1 500 Internal Server Error';
+        } else {
+            $strErrorDesc = 'Method not supported';
+            $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
         }
 
+        // send output 
         if ($strErrorDesc) {
-            $this->sendOutput(
-                json_encode(array('error' => $strErrorDesc)), 
-                array('Content-Type: application/json', $strErrorHeader)
-            );
+            $response = json_encode(['error' => $strErrorDesc]);
+            $this->sendOutput($response, array('Content-Type: application/json', $strErrorHeader));
         }
     }
 
@@ -55,24 +55,27 @@ class UserController extends BaseController
     {
         $strErrorDesc = '';
         $requestMethod = $_SERVER["REQUEST_METHOD"];
-        
+
         if (strtoupper($requestMethod) == 'POST') {
             $postData = json_decode(file_get_contents("php://input"), true);
             $username = $postData['username'] ?? '';
             $password = $postData['password'] ?? '';
             error_log("Login attempt: username = '$username', password = '$password'");
-    
+
             if ($username && $password) {
                 $userModel = new UserModel();
                 $user = $userModel->loginUser($username, $password);
-    
+
                 if ($user) {
                     // Set session variables
-                    session_start();
+                    if (session_status() == PHP_SESSION_NONE) {
+                        session_start();
+                    }
+                    
                     $_SESSION["loggedin"] = true;
                     $_SESSION["userid"] = $username;
                     error_log("Session variables set: loggedin = " . $_SESSION["loggedin"] . ", userid = " . $_SESSION["userid"]);
-                    
+
                     $this->sendOutput(json_encode([
                         'success' => true,
                         'username' => $user['username'],
@@ -104,8 +107,12 @@ class UserController extends BaseController
      */
     public function signupAction()
     {
-        session_start();
+        if (session_status() == PHP_SESSION_NONE) {
+            session_start();
+        }
+        
         $data = json_decode(file_get_contents("php://input"), true);
+
         if (!isset($data['username']) || !isset($data['password'])) {
             echo json_encode(["success" => false, "message" => "Username and password required"]);
             return;
@@ -125,7 +132,7 @@ class UserController extends BaseController
             $_SESSION["loggedin"] = true;
             $_SESSION["userid"] = $username;
             error_log("Session variables set after signup: loggedin = " . $_SESSION["loggedin"] . ", userid = " . $_SESSION["userid"]);
-            
+
             echo json_encode(["success" => true, "message" => "User created successfully", "username" => $username]);
         } else {
             echo json_encode(["success" => false, "message" => "User already exists"]);
@@ -139,10 +146,13 @@ class UserController extends BaseController
     {
         $strErrorDesc = '';
         $requestMethod = $_SERVER["REQUEST_METHOD"];
-        
+
         if (strtoupper($requestMethod) == 'POST') {
             try {
-                session_start();
+                if (session_status() == PHP_SESSION_NONE) {
+                    session_start();
+                }
+                
                 $postData = json_decode(file_get_contents("php://input"), true);
                 $revid = $postData['revid'] ?? '';
                 $userid = $postData['userid'] ?? '';
@@ -191,13 +201,17 @@ class UserController extends BaseController
         }
     }
 
-    public function editAction() {
+    /**
+     * "/user/edit" Endpoint - Edit a review
+     */
+    public function editAction()
+    {
         try {
             if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 if (session_status() === PHP_SESSION_NONE) {
                     session_start();
                 }
-                
+
                 if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
                     header('Content-Type: application/json');
                     echo json_encode(['error' => 'You must be logged in to edit reviews']);
@@ -225,7 +239,7 @@ class UserController extends BaseController
 
                 $userModel = new UserModel();
                 $result = $userModel->editReview($revid, $userid, $location, $meal, $rating);
-                
+
                 if ($result) {
                     header('Content-Type: application/json');
                     echo json_encode(['success' => true]);
@@ -241,7 +255,82 @@ class UserController extends BaseController
             error_log("Error in editAction: " . $e->getMessage());
             header('Content-Type: application/json');
             echo json_encode(['error' => 'An error occurred while editing the review']);
+            error_log("Review Error: " . $e->getMessage());
+            $this->sendOutput(
+                json_encode(['error' => 'Internal server error']),
+                ['Content-Type: application/json', 'HTTP/1.1 500 Internal Server Error']
+            );
         }
     }
+    public function addReviewAction()
+    {
+        $strErrorDesc = '';
+        $requestMethod = $_SERVER["REQUEST_METHOD"];
+        
+        if (strtoupper($requestMethod) != 'POST') {
+            $this->sendOutput(
+                json_encode(['error' => 'Method not supported']),
+                ['Content-Type: application/json', 'HTTP/1.1 422 Unprocessable Entity']
+            );
+            return;
+        }
+    
+        try {
+            $input = json_decode(file_get_contents("php://input"), true);
+            
+            // Validate required fields
+            if (!isset($input['username'], $input['location'], $input['meal'], $input['rating'])) {
+                throw new InvalidArgumentException('Missing required fields');
+            }
+    
+            // Sanitize and validate inputs
+            $username = trim($input['username']);
+            $location = trim($input['location']);
+            $meal = trim($input['meal']);
+            $rating = filter_var($input['rating'], FILTER_VALIDATE_INT, [
+                'options' => [
+                    'min_range' => 1,
+                    'max_range' => 10
+                ]
+            ]);
+    
+            if ($rating === false) {
+                throw new InvalidArgumentException('Rating must be integer between 1-10');
+            }
+    
+            $userModel = new UserModel();
+            $result = $userModel->insertReview($username, $location, $meal, $rating);
+    
+            if (!$result) {
+                throw new RuntimeException('Failed to insert review');
+            }
+    
+            $this->sendOutput(
+                json_encode([
+                    'success' => true,
+                    'data' => [
+                        'username' => $username,
+                        'location' => $location,
+                        'meal' => $meal,
+                        'rating' => $rating
+                    ]
+                ]),
+                ['Content-Type: application/json', 'HTTP/1.1 201 Created']
+            );
+    
+        } catch (InvalidArgumentException $e) {
+            $this->sendOutput(
+                json_encode(['error' => $e->getMessage()]),
+                ['Content-Type: application/json', 'HTTP/1.1 400 Bad Request']
+            );
+        } catch (Exception $e) {
+            error_log("Review Error: " . $e->getMessage());
+            $this->sendOutput(
+                json_encode(['error' => 'Internal server error']),
+                ['Content-Type: application/json', 'HTTP/1.1 500 Internal Server Error']
+            );
+        }
+    }
+    
 }
 ?>

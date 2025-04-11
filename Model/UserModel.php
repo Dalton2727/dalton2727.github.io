@@ -42,7 +42,6 @@ class UserModel extends Database
         $result = $this->select(
             "SELECT * FROM users WHERE username = ?",
             [["s", $username]]
-
         );
 
         // If the user exists, verify the password
@@ -59,54 +58,85 @@ class UserModel extends Database
     /**
      * Create a new user with hashed password.
      */
-   public function createUser($username, $password)
-{
-    try {
-        // Check if user already exists
-        $existingUser = $this->select("SELECT * FROM users WHERE username = ?", [['s', $username]]);
-        if (!empty($existingUser)) {
-            return false; // Username taken
+    public function createUser($username, $password)
+    {
+        try {
+            // Check if user already exists
+            $existingUser = $this->select("SELECT * FROM users WHERE username = ?", [['s', $username]]);
+            if (!empty($existingUser)) {
+                return false; // Username taken
+            }
+
+            // Insert user using correct parameter binding
+            $this->execute("INSERT INTO users (username, password) VALUES (?, ?)", [
+                ['s', $username],
+                ['s', $password]
+            ]);
+
+            return true;
+        } catch (Exception $e) {
+            error_log("Error in createUser: " . $e->getMessage());
+            return false;
         }
-
-
-        // Insert user using correct parameter binding
-        $this->execute("INSERT INTO users (username, password) VALUES (?, ?)", [
-            ['s', $username],
-            ['s', $password]
-        ]);
-
-        return true;
-    } catch (Exception $e) {
-        error_log("Error in createUser: " . $e->getMessage());
-        return false;
     }
-}
 
     /**
      * Delete a review from the database.
      */
-    public function deleteReview($revid, $userid)
+    public function deleteReview($revid, $username)
+{
+    try {
+        $result = $this->select(
+            "SELECT * FROM reviews WHERE username = ? AND id = ?",
+            [['s', $username], ['i', $revid]]
+        );
+
+        if (empty($result)) {
+            return false;
+        }
+
+        $this->execute(
+            "DELETE FROM reviews WHERE id = ? AND username = ?",
+            [['i', $revid], ['s', $username]]
+        );
+
+        return true;
+    } catch (Exception $e) {
+        error_log("Error in deleteReview: " . $e->getMessage());
+        return false;
+    }
+}
+
+
+    /**
+     * Insert a review into the database.
+     */
+    public function insertReview($username, $location, $meal, $rating)
     {
         try {
-            // First verify the review exists and belongs to the user
-            $result = $this->select(
-                "SELECT * FROM reviews WHERE username = ? AND id = ?",
-                [['s', $userid], ['i', $revid]]
-            );
+            // Validate rating
+            $rating = filter_var($rating, FILTER_VALIDATE_INT, [
+                'options' => ['min_range' => 1, 'max_range' => 10]
+            ]);
 
-            if (empty($result)) {
-                return false;
+            if ($rating === false) {
+                throw new InvalidArgumentException("Invalid rating value");
             }
 
-            // Delete the review
+            // Insert the review
             $this->execute(
-                "DELETE FROM reviews WHERE id = ? AND username = ?",
-                [['i', $revid], ['s', $userid]]
+                "INSERT INTO reviews (username, location, meal, rating) VALUES (?, ?, ?, ?)",
+                [
+                    ['s', trim($username)],
+                    ['s', trim($location)],
+                    ['s', trim($meal)],
+                    ['i', $rating]
+                ]
             );
 
             return true;
         } catch (Exception $e) {
-            error_log("Error in deleteReview: " . $e->getMessage());
+            error_log("insertReview error: " . $e->getMessage());
             return false;
         }
     }
@@ -122,6 +152,7 @@ class UserModel extends Database
                 "SELECT * FROM reviews WHERE username = ? AND id = ?",
                 [['s', $userid], ['i', $revid]]
             );
+            
 
             if (empty($result)) {
                 return false;
@@ -138,6 +169,7 @@ class UserModel extends Database
                     ['s', $userid]
                 ]
             );
+            
 
             return true;
         } catch (Exception $e) {
