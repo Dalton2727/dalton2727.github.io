@@ -28,8 +28,7 @@ From the login page, you can create a username and password to log in and will t
 
 (The start page leads to a demo of our budgeting app)
 
-For the Mobile react version, run the code with an emulator, we used expo go, running the code npx expo start and navigating through the app on a real mobile device using the navbar
-at the bottom of the app.
+For the Mobile react version, run the code with an emulator, we used expo go, running the code npx expo start and navigating through the app on a real mobile device using the navbar at the bottom of the app. The mobile version also uses the localhost through XAAMP to call on our SQL database and tables.
 
 Make sure that you run all of these commands in your terminal to get the app working with Expo:
 
