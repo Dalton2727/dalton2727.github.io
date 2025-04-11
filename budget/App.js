@@ -210,9 +210,13 @@ const handleAddReview = async () => {
           rating: editForm.rating
         })
       });
+// Now define handleDelete separately
+const handleDelete = async (reviewId, username) => {
+  try {
+    console.log('Attempting to delete review with ID:', reviewId, 'for user:', username);
 
       console.log('Edit response status:', response.status);
-
+      
       const responseText = await response.text();
       console.log('Raw response text:', responseText);
 
