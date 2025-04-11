@@ -12,6 +12,10 @@ The work for this project was split 50/50
 
 <img width="1470" alt="Screenshot 2025-03-07 at 11 37 08 PM" src="https://github.com/user-attachments/assets/5879ae59-fd49-43c4-8505-22db066df650" />
 
+We hard-coded our IP address in lines: 50, 57, 151, 343, 449, 540, 546 of the App.js file
+
+We used AI for general debugging and help with formatting/styling as well as the CORS functionality
+
 Link to the website through: https://wesspend.free.nf/
 
 To load our website locally, first download all files and put them in your htdocs folder.
