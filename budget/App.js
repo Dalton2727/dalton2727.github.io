@@ -228,10 +228,17 @@ const handleDelete = async (reviewId, username) => {
         console.error('Failed to parse response as JSON:', parseError);
         throw new Error('Invalid response from server: ' + responseText);
       }
+    const formData = new FormData();
+    formData.append('revid', reviewId);
+    formData.append('userid', username);
 
       if (!response.ok) {
         throw new Error(responseData.error || 'Failed to edit review');
       }
+    const response = await fetch('http://10.0.2.2/delete_review_api.php', {
+      method: 'POST',
+      body: formData,
+    });
 
       if (responseData.success) {
         await fetchFromServer();
@@ -244,6 +251,9 @@ const handleDelete = async (reviewId, username) => {
     } catch (error) {
       console.error('Edit error:', error);
       Alert.alert('Error', error.message || 'Failed to edit review');
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || 'Failed to delete review');
     }
   };
 
@@ -252,11 +262,23 @@ const handleDelete = async (reviewId, username) => {
       Alert.alert('Error', 'You must be logged in to edit reviews');
       return;
     }
+    const responseData = await response.json();
+    console.log('Delete response:', responseData);
 
     if (username !== review.username) {
       Alert.alert('Error', 'You can only edit your own reviews');
       return;
+    if (responseData.success) {
+      await fetchFromServer();
+      Alert.alert('Success', 'Review deleted successfully');
+    } else {
+      throw new Error(responseData.error || 'Failed to delete review');
     }
+  } catch (error) {
+    console.error('Delete error:', error);
+    Alert.alert('Error', error.message || 'Failed to delete review');
+  }
+};
 
     setEditingReview(review.id);
     setEditForm({
