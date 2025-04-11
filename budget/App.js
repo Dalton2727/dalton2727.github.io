@@ -107,7 +107,7 @@ const handleAddReview = async () => {
 
       console.log('Delete response status:', response.status);
       console.log('Delete response headers:', response.headers);
-
+      
       const responseText = await response.text();
       console.log('Raw response text:', responseText);
 
