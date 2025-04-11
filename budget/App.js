@@ -301,6 +301,30 @@ const handleDelete = async (reviewId, username) => {
     <View style={styles.container}>
       <Text style={styles.header}>Review Screen</Text>
       {username && <Text style={styles.header}>User: {username}</Text>}
+      {username && (
+              <View style={{ marginBottom: 20 }}>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Location"
+                  value={location}
+                  onChangeText={setLocation}
+                />
+                <TextInput
+                  style={styles.input}
+                  placeholder="Meal Item"
+                  value={meal}
+                  onChangeText={setMeal}
+                />
+                <TextInput
+                  style={styles.input}
+                  placeholder="Rating (1-10)"
+                  keyboardType="numeric"
+                  value={rating}
+                  onChangeText={setRating}
+                />
+                <Button title="Submit Review" onPress={handleAddReview} />
+              </View>
+            )}
       {loading ? (
         <Text>Loading...</Text>
       ) : (
