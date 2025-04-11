@@ -415,6 +415,54 @@ const handleDelete = async (reviewId, username) => {
                     </View>
                   </View>
                 )}
+                    );
+                  })}
+                  <Button
+                    onPress={() =>
+                      Alert.alert(
+                        'Confirm Deletion',
+                        'Are you sure you want to delete?',
+                        [
+                          {
+                            text: 'No',
+                            onPress: () => console.log('Delete cancelled'),
+                            style: 'cancel',
+                          },
+                          {
+                            text: 'Yes',
+                            onPress: () => console.log('Review deleted'),
+                            style: 'cancel',
+                          },
+                        ],
+                        { cancelable: true }
+                      )
+                    }
+                    title="Edit"
+                    color="#841584"
+                  />
+                  <Button
+                  onPress={() =>
+                    Alert.alert(
+                      'Confirm Deletion',
+                      'Are you sure you want to delete this review?',
+                      [
+                        {
+                          text: 'No',
+                          onPress: () => console.log('Delete cancelled'),
+                          style: 'cancel',
+                        },
+                        {
+                          text: 'Yes',
+                          onPress: () => handleDelete(item.id, item.username),
+                        },
+                      ],
+                      { cancelable: true }
+                    )
+                  }
+                    title="Delete"
+                    color="#841584"
+                  />
+                </View>
               </View>
             )}
           />
