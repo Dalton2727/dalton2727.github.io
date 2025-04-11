@@ -485,28 +485,27 @@ const LoginScreen = ({ navigation }) => {
     setLoading(true);
 
     try {
-      const response = await fetch('http://172.21.48.1/index2.php/user/login', {
+      const response = await fetch('http://10.0.2.2/index2.php/user/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        credentials: 'include',
         body: JSON.stringify({ username: inputUsername, password }),
       });
 
       const data = await response.json();
-      console.log('Login response:', data);
+      console.log(data);
 
       if (data.success) {
-        login(inputUsername);
-        Alert.alert('Login successful', `Welcome ${inputUsername}`);
+        login(data.username); // Set the username in context after successful login
+        Alert.alert('Login successful', `Welcome ${data.username}`);
         navigation.navigate('Reviews');
       } else {
         Alert.alert('Login failed', data.message || 'Invalid credentials');
       }
     } catch (error) {
-      console.error('Login error:', error);
-      Alert.alert('Error', 'Failed to login');
+      console.error('Login error:', error.message);
+      Alert.alert('Error', 'There was an issue with the login request.');
     } finally {
       setLoading(false);
     }
@@ -554,7 +553,7 @@ const LoginScreen = ({ navigation }) => {
       {!username && (
         <Button
           title="Don't have an account? Sign up"
-          onPress={() => navigation.navigate('SignUp')}
+          onPress={() => navigation.navigate('Sign Up')}
           color="gray"
         />
       )}
@@ -584,14 +583,14 @@ const SignUpScreen = ({ navigation }) => {
     }
 
     if (password.length < 10) {
-      Alert.alert('Error', 'Password must be at least 10 characters long');
-      return;
+       Alert.alert('Error', 'Password must be at least 10 characters long');
+       return;
     }
 
     setLoading(true);
 
     try {
-      const response = await fetch('http://172.21.48.1/index2.php/user/signup', {
+      const response = await fetch('http://10.0.2.2/index2.php/user/signup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -602,14 +601,18 @@ const SignUpScreen = ({ navigation }) => {
         }),
       });
 
+      // Check if the response status is OK (status code 2xx)
       if (!response.ok) {
         throw new Error(`Server responded with status: ${response.status}`);
       }
 
-      const responseText = await response.text();
+      // Log the raw response to check what the server is sending back
+      const responseText = await response.text();  // Get raw response as text
       console.log('Response Text:', responseText);
 
-      const data = JSON.parse(responseText);
+      // Now try to parse it as JSON
+      const data = JSON.parse(responseText);  // Manually parse the text to JSON
+
       console.log('SignUp Response:', data);
 
       if (data.success) {
@@ -619,10 +622,11 @@ const SignUpScreen = ({ navigation }) => {
         Alert.alert('Sign Up Failed', data.message || 'There was an error during sign up');
       }
     } catch (error) {
+      // Check if the error has a message, otherwise log the entire error object
       if (error instanceof Error) {
         console.error('Sign Up Error:', error.message);
       } else {
-        console.error('Sign Up Error:', error);
+        console.error('Sign Up Error:', error);  // Log the full error if it’s not an instance of Error
       }
       Alert.alert('Error', 'There was an issue with the sign-up request.');
     } finally {
@@ -682,13 +686,13 @@ const SignUpScreen = ({ navigation }) => {
 
 const HomeScreen = () => {
   return (
-    <WebView source={{ uri: 'http://172.21.48.1/start1.html' }} />
+    <WebView source={{ uri: 'http://10.0.2.2/start1.html' }} />
   );
 };
 
 const AboutScreen = () => {
   return (
-    <WebView source={{ uri: 'http://172.21.48.1/about1.html' }} />
+    <WebView source={{ uri: 'http://10.0.2.2/about1.html' }} />
   );
 };
 
