@@ -12,7 +12,8 @@ The work for this project was split 50/50
 
 <img width="1470" alt="Screenshot 2025-03-07 at 11 37 08 PM" src="https://github.com/user-attachments/assets/5879ae59-fd49-43c4-8505-22db066df650" />
 
-We hard-coded our IP address in lines: 50, 57, 151, 343, 449, 540, 546 of the App.js file
+We hard-coded our IP address in lines: 54, 87, 143, 206, 438, 543, 639, 645 of the App.js file
+(all hard coding now has the adress 10.0.2.2)
 
 We used AI for general debugging and help with formatting/styling as well as the CORS functionality
 
@@ -22,6 +23,9 @@ To load our website locally, first download all files and put them in your htdoc
 Then, setup an sql database named "login". Then in that database, under the SQL tag, copy and past the SQL code at the bottom of this page.
 After the SQL database has been setup, navigate to localhost in a browser, taking you to the login page.
 From the login page, you can create a username and password to log in and will then reach the landing page. There is a navbar on the top, you can click reviews to navigate to the reviews features (i.e. edit, delete, write).
+
+For the Mobile react version, run the code with an emulator, we used expo go, running the code npx expo start and navigating through the app on a real mobile device using the navbar
+at the bottom of the app.
 
 (The start page leads to a demo of our budgeting app)
 
