@@ -86,7 +86,7 @@ function ReviewsScreen() {
 
       console.log('Attempting to delete review with ID:', reviewId, 'for user:', username);
       console.log('Current session username:', username);
-
+      
       const response = await fetch(`http://172.21.48.1/index2.php/user/delete`, {
         method: 'POST',
         headers: {
