@@ -51,7 +51,7 @@ function ReviewsScreen() {
   const fetchFromServer = async () => {
     console.log('fetchFromServer called');
     try {
-      const response = await fetch('http://172.21.221.164/index2.php/user/list', {
+      const response = await fetch('http://10.0.2.2/index2.php/user/list', {
         headers: {
           'Content-Type': 'application/json',
         }
@@ -84,7 +84,7 @@ const handleAddReview = async () => {
   }
 
   try {
-    const response = await fetch('http://172.21.221.164/index2.php/user/addreview', {
+    const response = await fetch('http://10.0.2.2/index2.php/user/addreview', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -140,7 +140,7 @@ const handleDelete = async (reviewId, reviewUsername) => {
       console.log('Attempting to delete review with ID:', reviewId, 'for user:', username);
       console.log('Current session username:', username);
 
-      const response = await fetch('http://172.21.221.164/index2.php/user/delete', {
+      const response = await fetch('http://10.0.2.2/index2.php/user/delete', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -203,7 +203,7 @@ const handleEdit = async (reviewId, reviewUsername) => {
 
       console.log('Attempting to edit review with ID:', reviewId, 'for user:', username);
 
-      const response = await fetch('http://172.21.221.164/index2.php/user/edit', {
+      const response = await fetch('http://10.0.2.2/index2.php/user/edit', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -435,7 +435,7 @@ const LoginScreen = ({ navigation }) => {
     setLoading(true);
 
     try {
-      const response = await fetch('http://172.21.221.164/index2.php/user/login', {
+      const response = await fetch('http://10.0.2.2/index2.php/user/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -540,7 +540,7 @@ const SignUpScreen = ({ navigation }) => {
     setLoading(true);
 
     try {
-      const response = await fetch('http://172.21.221.164/index2.php/user/signup', {
+      const response = await fetch('http://10.0.2.2/index2.php/user/signup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -636,13 +636,13 @@ const SignUpScreen = ({ navigation }) => {
 
 const HomeScreen = () => {
   return (
-    <WebView source={{ uri: 'http://172.21.221.164/start1.html' }} />
+    <WebView source={{ uri: 'http://10.0.2.2/start1.html' }} />
   );
 };
 
 const AboutScreen = () => {
   return (
-    <WebView source={{ uri: 'http://172.21.221.164/about1.html' }} />
+    <WebView source={{ uri: 'http://10.0.2.2/about1.html' }} />
   );
 };
 
