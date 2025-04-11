@@ -43,6 +43,9 @@ function ReviewsScreen() {
     meal: '',
     rating: ''
   });
+  const [location, setLocation] = useState('');
+  const [meal, setMeal] = useState('');
+  const [rating, setRating] = useState('');
 
   const fetchFromServer = async () => {
     console.log('fetchFromServer called');
