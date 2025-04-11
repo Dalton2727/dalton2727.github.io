@@ -262,6 +262,9 @@ class UserController extends BaseController
             );
         }
     }
+     /**
+     * "/user/addreview" Endpoint - Add a review
+     */
     public function addReviewAction()
     {
         $strErrorDesc = '';

@@ -48,6 +48,7 @@ function ReviewsScreen() {
     rating: ''
   });
 
+  //uses fetch command to fetch from server (calls from frontend to backend)
   const fetchFromServer = async () => {
     console.log('fetchFromServer called');
     try {
@@ -73,6 +74,7 @@ function ReviewsScreen() {
   };
 
 const handleAddReview = async () => {
+  //checks the user is logged in and all fields are filled in, otherwise returns an error
   if (!username) {
     Alert.alert('Error', 'You must be logged in to submit a review.');
     return;
@@ -109,7 +111,7 @@ const handleAddReview = async () => {
       return;
     }
 
-
+    //review added to page if successful, page refreshed to reflect this
     if (data.success) {
       Alert.alert('Success', 'Review submitted');
       setLocation('');
@@ -122,11 +124,12 @@ const handleAddReview = async () => {
   } catch (error) {
     Alert.alert('Error', error.message || 'Failed to add review');
   }
-}; // <-- Properly close handleAddReview here
+};
 
-// Now define handleDelete separately
+// Defines handleDelete separately with similar format
 const handleDelete = async (reviewId, reviewUsername) => {
-    try {
+  //checks the user is logged in as the right account before deleting reviews  
+  try {
       if (!username) {
         Alert.alert('Error', 'You must be logged in to delete reviews');
         return;
@@ -183,6 +186,7 @@ const handleDelete = async (reviewId, reviewUsername) => {
       Alert.alert('Error', error.message || 'Failed to delete review');
     }
   };
+  //handleEdit function used when editing reviews
 const handleEdit = async (reviewId, reviewUsername) => {
     try {
       if (!username) {
@@ -194,7 +198,7 @@ const handleEdit = async (reviewId, reviewUsername) => {
         Alert.alert('Error', 'You can only edit your own reviews');
         return;
       }
-
+      //also checks the rating is between 1 and 10 before letting them change rating
       const rating = parseInt(editForm.rating);
       if (isNaN(rating) || rating < 1 || rating > 10) {
         Alert.alert('Error', 'Rating must be between 1 and 10');
@@ -251,6 +255,8 @@ const handleEdit = async (reviewId, reviewUsername) => {
     }
   };
 
+  //makes sure user is logged in before allowing edit functionality
+  //This way the user knows they are logged in/out and permissions are adjusted accordingly before even getting to the edit screen
   const startEditing = (review) => {
     if (!username) {
       Alert.alert('Error', 'You must be logged in to edit reviews');
@@ -270,6 +276,7 @@ const handleEdit = async (reviewId, reviewUsername) => {
     });
   };
 
+  //if the user cancels, resets edit form to default
   const cancelEditing = () => {
     setEditingReview(null);
     setEditForm({ location: '', meal: '', rating: '' });
@@ -279,6 +286,7 @@ const handleEdit = async (reviewId, reviewUsername) => {
     fetchFromServer();
   }, []);
 
+  //view of the application
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Review Screen</Text>
@@ -312,7 +320,7 @@ const handleEdit = async (reviewId, reviewUsername) => {
                       value={editForm.rating}
                       onChangeText={(text) => {
                         const num = parseInt(text);
-                        if (text === '' || (num >= 1 && num <= 10)) {
+                        if (text === '' || (num >= 1 && num <= 10)) {//restricts ratings from 1-10
                           setEditForm({ ...editForm, rating: text });
                         }
                       }}
@@ -340,6 +348,7 @@ const handleEdit = async (reviewId, reviewUsername) => {
                     <View style={styles.ratingRow}>
                       <Text>Rating: </Text>
                       {[...Array(10)].map((_, i) => {
+                        //uses icons for rating system 1-10
                         let iconName = 'fast-food-outline';
                         if (item.location === 'RBC') {
                           iconName = i < item.rating ? 'cafe' : 'cafe-outline';
@@ -358,9 +367,9 @@ const handleEdit = async (reviewId, reviewUsername) => {
                         );
                       })}
                     </View>
-                    <View style={{ flexDirection: 'row', marginTop: 4 }}>
+                    <View style={{ flexDirection: 'row', marginTop: 4 }}> 
                       <Button
-                        title="Edit"
+                        title="Edit" //edit and delete buttons are visible on each review so the user can easily choose which one they'd like to edit or delete
                         onPress={() => startEditing(item)}
                         color="#841584"
                         style={{ marginRight: 0 }}
@@ -381,7 +390,7 @@ const handleEdit = async (reviewId, reviewUsername) => {
         )
       )}
      {username ? (
-
+//add review is available in reviews page if the user is logged in (posts the new review under that user)
        <View style={styles.card}>
          <Text style={styles.header}>Add a New Review</Text>
          <TextInput
