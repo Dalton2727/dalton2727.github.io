@@ -190,5 +190,58 @@ class UserController extends BaseController
             $this->sendOutput($response, array('Content-Type: application/json', $strErrorHeader));
         }
     }
+
+    public function editAction() {
+        try {
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                if (session_status() === PHP_SESSION_NONE) {
+                    session_start();
+                }
+                
+                if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
+                    header('Content-Type: application/json');
+                    echo json_encode(['error' => 'You must be logged in to edit reviews']);
+                    return;
+                }
+
+                $data = json_decode(file_get_contents('php://input'), true);
+                $revid = $data['revid'] ?? '';
+                $userid = $data['userid'] ?? '';
+                $location = $data['location'] ?? '';
+                $meal = $data['meal'] ?? '';
+                $rating = $data['rating'] ?? '';
+
+                if (empty($revid) || empty($userid) || empty($location) || empty($meal) || empty($rating)) {
+                    header('Content-Type: application/json');
+                    echo json_encode(['error' => 'All fields are required']);
+                    return;
+                }
+
+                if ($userid !== $_SESSION['userid']) {
+                    header('Content-Type: application/json');
+                    echo json_encode(['error' => 'You can only edit your own reviews']);
+                    return;
+                }
+
+                $userModel = new UserModel();
+                $result = $userModel->editReview($revid, $userid, $location, $meal, $rating);
+                
+                if ($result) {
+                    header('Content-Type: application/json');
+                    echo json_encode(['success' => true]);
+                } else {
+                    header('Content-Type: application/json');
+                    echo json_encode(['error' => 'Failed to edit review']);
+                }
+            } else {
+                header('Content-Type: application/json');
+                echo json_encode(['error' => 'Method not supported']);
+            }
+        } catch (Exception $e) {
+            error_log("Error in editAction: " . $e->getMessage());
+            header('Content-Type: application/json');
+            echo json_encode(['error' => 'An error occurred while editing the review']);
+        }
+    }
 }
 ?>

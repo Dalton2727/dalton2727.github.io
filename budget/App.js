@@ -36,7 +36,13 @@ export const UserProvider = ({ children }) => {
 function ReviewsScreen() {
   const [reviewData, setReviewData] = useState([]);
   const [loading, setLoading] = useState(true);
-  const { username } = useUser(); // Get username from context
+  const { username } = useUser();
+  const [editingReview, setEditingReview] = useState(null);
+  const [editForm, setEditForm] = useState({
+    location: '',
+    meal: '',
+    rating: ''
+  });
 
   const fetchFromServer = async () => {
     console.log('fetchFromServer called');
@@ -122,6 +128,98 @@ function ReviewsScreen() {
     }
   };
 
+  const handleEdit = async (reviewId, reviewUsername) => {
+    try {
+      if (!username) {
+        Alert.alert('Error', 'You must be logged in to edit reviews');
+        return;
+      }
+
+      if (username !== reviewUsername) {
+        Alert.alert('Error', 'You can only edit your own reviews');
+        return;
+      }
+
+      const rating = parseInt(editForm.rating);
+      if (isNaN(rating) || rating < 1 || rating > 10) {
+        Alert.alert('Error', 'Rating must be between 1 and 10');
+        return;
+      }
+
+      console.log('Attempting to edit review with ID:', reviewId, 'for user:', username);
+      
+      const response = await fetch('http://172.21.48.1/index2.php/user/edit', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({
+          revid: reviewId,
+          userid: username,
+          location: editForm.location,
+          meal: editForm.meal,
+          rating: editForm.rating
+        })
+      });
+
+      console.log('Edit response status:', response.status);
+      
+      const responseText = await response.text();
+      console.log('Raw response text:', responseText);
+
+      let responseData;
+      try {
+        responseData = JSON.parse(responseText);
+        console.log('Parsed response data:', responseData);
+      } catch (parseError) {
+        console.error('Failed to parse response as JSON:', parseError);
+        throw new Error('Invalid response from server: ' + responseText);
+      }
+
+      if (!response.ok) {
+        throw new Error(responseData.error || 'Failed to edit review');
+      }
+
+      if (responseData.success) {
+        await fetchFromServer();
+        setEditingReview(null);
+        setEditForm({ location: '', meal: '', rating: '' });
+        Alert.alert('Success', 'Review edited successfully');
+      } else {
+        throw new Error(responseData.error || 'Failed to edit review');
+      }
+    } catch (error) {
+      console.error('Edit error:', error);
+      Alert.alert('Error', error.message || 'Failed to edit review');
+    }
+  };
+
+  const startEditing = (review) => {
+    if (!username) {
+      Alert.alert('Error', 'You must be logged in to edit reviews');
+      return;
+    }
+
+    if (username !== review.username) {
+      Alert.alert('Error', 'You can only edit your own reviews');
+      return;
+    }
+
+    setEditingReview(review.id);
+    setEditForm({
+      location: review.location,
+      meal: review.meal,
+      rating: review.rating
+    });
+  };
+
+  const cancelEditing = () => {
+    setEditingReview(null);
+    setEditForm({ location: '', meal: '', rating: '' });
+  };
+
   useEffect(() => {
     fetchFromServer();
   }, []);
@@ -139,77 +237,87 @@ function ReviewsScreen() {
             keyExtractor={(item, index) => index.toString()}
             renderItem={({ item }) => (
               <View style={styles.card}>
-                <Text style={styles.username}>User: {item.username}</Text>
-                <Text> Location: {item.location}</Text>
-                <Text> Meal Item: {item.meal}</Text>
-                <View style={styles.ratingRow}>
-                  <Text> Rating: </Text>
-                  {[...Array(10)].map((_, i) => {
-                    let iconName = 'fast-food-outline'; // Default icon
-
-                    if (item.location === 'RBC') {
-                      iconName = i < item.rating ? 'cafe' : 'cafe-outline';
-                    } else if (item.location === 'WesWings') {
-                      iconName = i < item.rating ? 'fast-food' : 'fast-food-outline';
-                    } else {
-                      iconName = i < item.rating ? 'restaurant' : 'restaurant-outline';
-                    }
-
-                    return (
-                      <Ionicons
-                        key={i}
-                        name={iconName}
-                        size={18}
-                        color={i < item.rating ? '#edc811' : '#ccc'}
+                {editingReview === item.id ? (
+                  <View>
+                    <TextInput
+                      style={styles.input}
+                      placeholder="Location"
+                      value={editForm.location}
+                      onChangeText={(text) => setEditForm({ ...editForm, location: text })}
+                    />
+                    <TextInput
+                      style={styles.input}
+                      placeholder="Meal"
+                      value={editForm.meal}
+                      onChangeText={(text) => setEditForm({ ...editForm, meal: text })}
+                    />
+                    <TextInput
+                      style={styles.input}
+                      placeholder="Rating (1-10)"
+                      value={editForm.rating}
+                      onChangeText={(text) => {
+                        const num = parseInt(text);
+                        if (text === '' || (num >= 1 && num <= 10)) {
+                          setEditForm({ ...editForm, rating: text });
+                        }
+                      }}
+                      keyboardType="numeric"
+                      maxLength={2}
+                    />
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 4 }}>
+                      <Button
+                        title="Save"
+                        onPress={() => handleEdit(item.id, item.username)}
+                        color="#841584"
                       />
-                    );
-                  })}
-                  <Button
-                    onPress={() =>
-                      Alert.alert(
-                        'Confirm Deletion',
-                        'Are you sure you want to delete?',
-                        [
-                          {
-                            text: 'No',
-                            onPress: () => console.log('Delete cancelled'),
-                            style: 'cancel',
-                          },
-                          {
-                            text: 'Yes',
-                            onPress: () => console.log('Review deleted'),
-                            style: 'cancel',
-                          },
-                        ],
-                        { cancelable: true }
-                      )
-                    }
-                    title="Edit"
-                    color="#841584"
-                  />
-                  <Button
-                  onPress={() =>
-                    Alert.alert(
-                      'Confirm Deletion',
-                      'Are you sure you want to delete this review?',
-                      [
-                        {
-                          text: 'No',
-                          onPress: () => console.log('Delete cancelled'),
-                          style: 'cancel',
-                        },
-                        {
-                          text: 'Yes',
-                          onPress: () => handleDelete(item.id, item.username),
-                        },
-                      ],
-                      { cancelable: true }
-                    )
-                  }
-                    title="Delete"
-                    color="#841584"
-                  />
-                </View>
+                      <Button
+                        title="Cancel"
+                        onPress={cancelEditing}
+                        color="#666"
+                      />
+                    </View>
+                  </View>
+                ) : (
+                  <View>
+                    <Text style={styles.username}>User: {item.username}</Text>
+                    <Text>Location: {item.location}</Text>
+                    <Text>Meal Item: {item.meal}</Text>
+                    <View style={styles.ratingRow}>
+                      <Text>Rating: </Text>
+                      {[...Array(10)].map((_, i) => {
+                        let iconName = 'fast-food-outline';
+                        if (item.location === 'RBC') {
+                          iconName = i < item.rating ? 'cafe' : 'cafe-outline';
+                        } else if (item.location === 'WesWings') {
+                          iconName = i < item.rating ? 'fast-food' : 'fast-food-outline';
+                        } else {
+                          iconName = i < item.rating ? 'restaurant' : 'restaurant-outline';
+                        }
+                        return (
+                          <Ionicons
+                            key={i}
+                            name={iconName}
+                            size={18}
+                            color={i < item.rating ? '#edc811' : '#ccc'}
+                          />
+                        );
+                      })}
+                    </View>
+                    <View style={{ flexDirection: 'row', marginTop: 4 }}>
+                      <Button
+                        title="Edit"
+                        onPress={() => startEditing(item)}
+                        color="#841584"
+                        style={{ marginRight: 0 }}
+                      />
+                      <Button
+                        title="Delete"
+                        onPress={() => handleDelete(item.id, item.username)}
+                        color="#841584"
+                      />
+                    </View>
+                  </View>
+                )}
               </View>
             )}
           />
