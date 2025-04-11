@@ -110,5 +110,40 @@ class UserModel extends Database
             return false;
         }
     }
+
+    /**
+     * Edit a review in the database.
+     */
+    public function editReview($revid, $userid, $location, $meal, $rating)
+    {
+        try {
+            // First verify the review exists and belongs to the user
+            $result = $this->select(
+                "SELECT * FROM reviews WHERE username = ? AND id = ?",
+                [['s', $userid], ['i', $revid]]
+            );
+
+            if (empty($result)) {
+                return false;
+            }
+
+            // Update only the editable fields
+            $this->execute(
+                "UPDATE reviews SET location = ?, meal = ?, rating = ? WHERE id = ? AND username = ?",
+                [
+                    ['s', $location],
+                    ['s', $meal],
+                    ['i', $rating],
+                    ['i', $revid],
+                    ['s', $userid]
+                ]
+            );
+
+            return true;
+        } catch (Exception $e) {
+            error_log("Error in editReview: " . $e->getMessage());
+            return false;
+        }
+    }
 }
 ?>
