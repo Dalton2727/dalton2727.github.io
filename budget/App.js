@@ -99,6 +99,11 @@ function ReviewsScreen() {
           userid: username
         })
       });
+const handleAddReview = async () => {
+  if (!username) {
+    Alert.alert('Error', 'You must be logged in to submit a review.');
+    return;
+  }
 
       console.log('Delete response status:', response.status);
       console.log('Delete response headers:', response.headers);
