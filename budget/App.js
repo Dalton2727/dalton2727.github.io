@@ -179,9 +179,22 @@ const handleAddReview = async () => {
         Alert.alert('Error', 'Rating must be between 1 and 10');
         return;
       }
+    if (data.success) {
+      Alert.alert('Success', 'Review submitted');
+      setLocation('');
+      setMeal('');
+      setRating('');
+      fetchFromServer(); // refresh
+    } else {
+      throw new Error(data.message || 'Failed to add review');
+    }
+  } catch (error) {
+    Alert.alert('Error', error.message || 'Failed to add review');
+  }
+}; // <-- Properly close handleAddReview here
 
       console.log('Attempting to edit review with ID:', reviewId, 'for user:', username);
-
+      
       const response = await fetch('http://172.21.48.1/index2.php/user/edit', {
         method: 'POST',
         headers: {
