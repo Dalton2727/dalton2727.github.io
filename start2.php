@@ -1,4 +1,3 @@
-//start page in php
 <?php 
 session_start();
 include 'dbconnection.php';
@@ -15,10 +14,10 @@ $userid = isset($_GET['userid']) ? $_GET['userid'] : '';
         <title>COMP 333: Software Engineering Swings Points</title>
         <link rel="stylesheet" href="CSScode.css" />
     </head>
-        <body id = "font" style="background-color:rgb(32, 31, 31);">
-            <div id="navbar">
+        <body id = "font" style="background-color:rgb(32, 31, 31);" >
+            <div id="navbar" class="dark">
                 <ul>
-                    <li style="color: white;">User: <?php echo $userid?></li>
+                    <li>User: <?php echo $userid?></li>
                     <li> <?php echo '<a href="demo.php?userid=' . urlencode($userid) . '">Start</a>'?> </li>
                     <li> <?php echo '<a href="start2.php?userid=' . urlencode($userid) . '">Home</a>'?> </li>
                     <li> <?php echo '<a href="about2.php?userid=' . urlencode($userid) . '#about">About</a>'; ?> </li>
@@ -37,8 +36,6 @@ $userid = isset($_GET['userid']) ? $_GET['userid'] : '';
                         <p>Keeping track of your points can be stressful and laborious.
                         With our site, budgeting is merely a swipe away!
                         </p>
-                        //if session is logged in, have log out option in navbar that logs them out then directs them to the log in page
-                        //if user is logged out, allows them to log in through navbar which redirects them to log in page
                         <a href="<?php if ($_SESSION["loggedin"] == true) {echo 'reviews.php?userid=' . urlencode($userid) ;} else {echo 'index.php' ;}?>" class="button">Start</a>
                     </div>
             </div>

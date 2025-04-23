@@ -1,4 +1,3 @@
-//shows all reviews posted
 <?php 
 session_start();
 include 'dbconnection.php';
@@ -14,10 +13,10 @@ $showReviews = isset($_GET['reviews']) ? $_GET['reviews'] : 'all'; //to switch b
         <meta name="description" content="Wesleyan University Point budgeter"/>
         <link rel="stylesheet" href="CSScode.css" />
     </head>
-<body id = "font" style="background-color:rgb(32, 31, 31);">
-            <div id="navbar">
+<body id="demo_font"  style="background-color:  #f4f4f4">
+            <div id="navbar" class="light">
                 <ul>
-                  <li style="color: white;">User: <?php echo $userid?></li>
+                  <li>User: <?php echo $userid?></li>
                   <li> <?php echo '<a href="reviews.php?userid=' . urlencode($userid) . '">Reviews</a>'?> </li>
                   <li> <?php echo '<a href="Edit.php?userid=' . urlencode($userid) . '">Edit</a>'?> </li>
                   <li> <?php echo '<a href="write.php?userid=' . urlencode($userid) . '">Write</a>'?> </li>
@@ -25,8 +24,8 @@ $showReviews = isset($_GET['reviews']) ? $_GET['reviews'] : 'all'; //to switch b
                   <li><?php echo '<a href="logout.php">Log Out</a>'; ?></li>
                 </ul>
               </div>
-              <div style = "color: white">
-              <?php //only shows the users reviews if they click the my reviews button
+              <div style = "color: black">
+              <?php 
             if ($showReviews == 'my') {
               $sql = "SELECT * FROM reviews WHERE username = ?";
             if ($stmt = $db->prepare($sql)) {
@@ -41,7 +40,6 @@ $showReviews = isset($_GET['reviews']) ? $_GET['reviews'] : 'all'; //to switch b
             }
             $stmt->close();
           }
-          
         } elseif ($showReviews == 'all') {
               $sql = "SELECT * FROM reviews";
               $result = mysqli_query($db, $sql);
@@ -56,7 +54,7 @@ $showReviews = isset($_GET['reviews']) ? $_GET['reviews'] : 'all'; //to switch b
             }
         }
               ?></div>
-<!-- option for my reviews or all reviews option to make it easier for user to filter to their reviews -->
+
 </body>
 <div style="text-align: center; margin-top: 20px;">
         <form action="" method="get">
