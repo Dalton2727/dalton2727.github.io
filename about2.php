@@ -3,14 +3,14 @@ session_start();
 include 'dbconnection.php';
 $userid = isset($_GET['userid']) ? $_GET['userid'] : '';
 ?>
-//about.html page but converted to php
+
 <!DOCTYPE html>
 <html lang="en">
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="Swings points balance" content="" />
     <meta name="description" content="Wesleyan University Point budgeter"/>
-    <div id="navbar">
+    <div id="navbar" class = "dark">
         <ul>
         <li style="color: white;">User: <?php echo $userid?></li>
                     <li> <?php echo '<a href="demo.php?userid=' . urlencode($userid) . '">Start</a>'?> </li>

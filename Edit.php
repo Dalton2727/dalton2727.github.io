@@ -18,7 +18,6 @@ while ($row = mysqli_fetch_assoc($result)) {
     $meals[] = $row['item'];
 }
 ?>
-//allows user to edit rating, some parts don't have to be changed
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -28,10 +27,10 @@ while ($row = mysqli_fetch_assoc($result)) {
         <meta name="description" content="Wesleyan University Point budgeter"/>
         <link rel="stylesheet" href="CSScode.css" />
     </head>
-<body id = "font" style="background-color:rgb(243, 70, 70);">
-            <div id="navbar">
+<body id = "demo_font" style="background-color: #f4f4f4;">
+            <div id="navbar" class="light"">
                 <ul>
-                  <li style="color: white;">User: <?php echo $userid?></li>
+                  <li>User: <?php echo $userid?></li>
                   <li> <?php echo '<a href="reviews.php?userid=' . urlencode($userid) . '">Reviews</a>'?> </li>
                   <li> <?php echo '<a href="Edit.php?userid=' . urlencode($userid) . '">Edit</a>'?> </li>
                   <li> <?php echo '<a href="write.php?userid=' . urlencode($userid) . '">Write</a>'?> </li>
@@ -40,8 +39,7 @@ while ($row = mysqli_fetch_assoc($result)) {
                   <li><?php echo '<a href="logout.php">Log Out</a>'; ?></li>
                 </ul>
               </div>
-              <div>
-                <h1> Type in the id of the review you want to edit and what you want to change for the location, meal, and/or rating</h1>
+              <div class = "demo-container">
                 <form name="form" action="editrev.php" method="POST">
                 <input type="hidden" name="userid" value="<?php echo htmlspecialchars($userid); ?>" />
                     <p>
@@ -81,9 +79,8 @@ while ($row = mysqli_fetch_assoc($result)) {
             <form name="form" action="delete.php" method="POST">
             <input type="hidden" name="userid" value="<?php echo htmlspecialchars($userid); ?>" />
                     <p>
-                      <!-- option to delete reviews, checks if review is created by the current user-->
                     <label> If you want to delete a review, type its id here: </label>
-                    <input type="number" name="revid" min ="1" max="10" />
+                    <input type="number" name="revbar" min ="1" max="10" />
                     </p>
 
                     <p>
