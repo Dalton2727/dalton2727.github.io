@@ -72,6 +72,16 @@ class UserController extends BaseController
                         session_start();
                     }
                     
+                    // Configure session cookie
+                    session_set_cookie_params([
+                        'lifetime' => 0,
+                        'path' => '/',
+                        'domain' => '',
+                        'secure' => false,
+                        'httponly' => true,
+                        'samesite' => 'Lax'
+                    ]);
+                    
                     $_SESSION["loggedin"] = true;
                     $_SESSION["userid"] = $username;
                     error_log("Session variables set: loggedin = " . $_SESSION["loggedin"] . ", userid = " . $_SESSION["userid"]);
@@ -79,7 +89,10 @@ class UserController extends BaseController
                     $this->sendOutput(json_encode([
                         'success' => true,
                         'username' => $user['username'],
-                    ]), ['Content-Type: application/json']);
+                    ]), [
+                        'Content-Type: application/json',
+                        'Set-Cookie: PHPSESSID=' . session_id() . '; Path=/; SameSite=Lax'
+                    ]);
                     return;
                 } else {
                     $this->sendOutput(json_encode([
@@ -208,17 +221,40 @@ class UserController extends BaseController
     {
         try {
             if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                // Start session if not already started
                 if (session_status() === PHP_SESSION_NONE) {
                     session_start();
                 }
 
+                // Configure session cookie
+                session_set_cookie_params([
+                    'lifetime' => 0,
+                    'path' => '/',
+                    'domain' => '',
+                    'secure' => false,
+                    'httponly' => true,
+                    'samesite' => 'Lax'
+                ]);
+
+                // Get the raw POST data
+                $rawData = file_get_contents('php://input');
+                error_log("Raw edit request data: " . $rawData);
+                
+                $data = json_decode($rawData, true);
+                error_log("Decoded edit data: " . print_r($data, true));
+                
+                // Log session status
+                error_log("Session status: " . (isset($_SESSION["loggedin"]) ? "Logged in" : "Not logged in"));
+                error_log("Session userid: " . ($_SESSION['userid'] ?? 'not set'));
+
                 if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
-                    header('Content-Type: application/json');
-                    echo json_encode(['error' => 'You must be logged in to edit reviews']);
+                    $this->sendOutput(
+                        json_encode(['error' => 'You must be logged in to edit reviews']),
+                        ['Content-Type: application/json', 'HTTP/1.1 401 Unauthorized', 'Set-Cookie: PHPSESSID=' . session_id() . '; Path=/; SameSite=Lax']
+                    );
                     return;
                 }
 
-                $data = json_decode(file_get_contents('php://input'), true);
                 $revid = $data['revid'] ?? '';
                 $userid = $data['userid'] ?? '';
                 $location = $data['location'] ?? '';
@@ -226,14 +262,18 @@ class UserController extends BaseController
                 $rating = $data['rating'] ?? '';
 
                 if (empty($revid) || empty($userid) || empty($location) || empty($meal) || empty($rating)) {
-                    header('Content-Type: application/json');
-                    echo json_encode(['error' => 'All fields are required']);
+                    $this->sendOutput(
+                        json_encode(['error' => 'All fields are required']),
+                        ['Content-Type: application/json', 'HTTP/1.1 400 Bad Request', 'Set-Cookie: PHPSESSID=' . session_id() . '; Path=/; SameSite=Lax']
+                    );
                     return;
                 }
 
                 if ($userid !== $_SESSION['userid']) {
-                    header('Content-Type: application/json');
-                    echo json_encode(['error' => 'You can only edit your own reviews']);
+                    $this->sendOutput(
+                        json_encode(['error' => 'You can only edit your own reviews']),
+                        ['Content-Type: application/json', 'HTTP/1.1 403 Forbidden', 'Set-Cookie: PHPSESSID=' . session_id() . '; Path=/; SameSite=Lax']
+                    );
                     return;
                 }
 
@@ -241,24 +281,27 @@ class UserController extends BaseController
                 $result = $userModel->editReview($revid, $userid, $location, $meal, $rating);
 
                 if ($result) {
-                    header('Content-Type: application/json');
-                    echo json_encode(['success' => true]);
+                    $this->sendOutput(
+                        json_encode(['success' => true]),
+                        ['Content-Type: application/json', 'HTTP/1.1 200 OK', 'Set-Cookie: PHPSESSID=' . session_id() . '; Path=/; SameSite=Lax']
+                    );
                 } else {
-                    header('Content-Type: application/json');
-                    echo json_encode(['error' => 'Failed to edit review']);
+                    $this->sendOutput(
+                        json_encode(['error' => 'Failed to edit review']),
+                        ['Content-Type: application/json', 'HTTP/1.1 500 Internal Server Error', 'Set-Cookie: PHPSESSID=' . session_id() . '; Path=/; SameSite=Lax']
+                    );
                 }
             } else {
-                header('Content-Type: application/json');
-                echo json_encode(['error' => 'Method not supported']);
+                $this->sendOutput(
+                    json_encode(['error' => 'Method not supported']),
+                    ['Content-Type: application/json', 'HTTP/1.1 405 Method Not Allowed', 'Set-Cookie: PHPSESSID=' . session_id() . '; Path=/; SameSite=Lax']
+                );
             }
         } catch (Exception $e) {
             error_log("Error in editAction: " . $e->getMessage());
-            header('Content-Type: application/json');
-            echo json_encode(['error' => 'An error occurred while editing the review']);
-            error_log("Review Error: " . $e->getMessage());
             $this->sendOutput(
-                json_encode(['error' => 'Internal server error']),
-                ['Content-Type: application/json', 'HTTP/1.1 500 Internal Server Error']
+                json_encode(['error' => 'An error occurred while editing the review']),
+                ['Content-Type: application/json', 'HTTP/1.1 500 Internal Server Error', 'Set-Cookie: PHPSESSID=' . session_id() . '; Path=/; SameSite=Lax']
             );
         }
     }

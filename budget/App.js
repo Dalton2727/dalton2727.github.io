@@ -198,7 +198,7 @@ const handleEdit = async (reviewId, reviewUsername) => {
         Alert.alert('Error', 'You can only edit your own reviews');
         return;
       }
-      //also checks the rating is between 1 and 10 before letting them change rating
+
       const rating = parseInt(editForm.rating);
       if (isNaN(rating) || rating < 1 || rating > 10) {
         Alert.alert('Error', 'Rating must be between 1 and 10');
@@ -206,12 +206,10 @@ const handleEdit = async (reviewId, reviewUsername) => {
       }
 
       console.log('Attempting to edit review with ID:', reviewId, 'for user:', username);
-
-      const response = await fetch('http://10.0.2.2/index2.php/user/edit', {
+      const response = await fetch('http://172.21.48.1/index2.php/user/edit', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Accept': 'application/json',
         },
         credentials: 'include',
         body: JSON.stringify({
@@ -223,35 +221,20 @@ const handleEdit = async (reviewId, reviewUsername) => {
         })
       });
 
-      console.log('Edit response status:', response.status);
+      const data = await response.json();
+      console.log('Edit response:', data);
 
-      const responseText = await response.text();
-      console.log('Raw response text:', responseText);
-
-      let responseData;
-      try {
-        responseData = JSON.parse(responseText);
-        console.log('Parsed response data:', responseData);
-      } catch (parseError) {
-        console.error('Failed to parse response as JSON:', parseError);
-        throw new Error('Invalid response from server: ' + responseText);
-      }
-
-      if (!response.ok) {
-        throw new Error(responseData.error || 'Failed to edit review');
-      }
-
-      if (responseData.success) {
-        await fetchFromServer();
+      if (data.success) {
+        Alert.alert('Success', 'Review updated successfully');
         setEditingReview(null);
         setEditForm({ location: '', meal: '', rating: '' });
-        Alert.alert('Success', 'Review edited successfully');
+        fetchFromServer();
       } else {
-        throw new Error(responseData.error || 'Failed to edit review');
+        Alert.alert('Error', data.error || 'Failed to update review');
       }
     } catch (error) {
       console.error('Edit error:', error);
-      Alert.alert('Error', error.message || 'Failed to edit review');
+      Alert.alert('Error', 'Failed to update review');
     }
   };
 
@@ -585,7 +568,7 @@ const SignUpScreen = ({ navigation }) => {
       if (error instanceof Error) {
         console.error('Sign Up Error:', error.message);
       } else {
-        console.error('Sign Up Error:', error);  // Log the full error if it’s not an instance of Error
+        console.error('Sign Up Error:', error);  // Log the full error if it's not an instance of Error
       }
       Alert.alert('Error', 'There was an issue with the sign-up request.');
     } finally {
