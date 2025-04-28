@@ -52,7 +52,7 @@ function ReviewsScreen() {
   const fetchFromServer = async () => {
     console.log('fetchFromServer called');
     try {
-      const response = await fetch('http://10.0.2.2/index2.php/user/list', {
+      const response = await fetch('http://172.21.48.1/index2.php/user/list', {
         headers: {
           'Content-Type': 'application/json',
         }
@@ -86,7 +86,7 @@ const handleAddReview = async () => {
   }
 
   try {
-    const response = await fetch('http://10.0.2.2/index2.php/user/addreview', {
+    const response = await fetch('http://172.21.48.1/index2.php/user/addreview', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -128,7 +128,7 @@ const handleAddReview = async () => {
 
 // Defines handleDelete separately with similar format
 const handleDelete = async (reviewId, reviewUsername) => {
-  //checks the user is logged in as the right account before deleting reviews  
+  //checks the user is logged in as the right account before deleting reviews
   try {
       if (!username) {
         Alert.alert('Error', 'You must be logged in to delete reviews');
@@ -143,7 +143,7 @@ const handleDelete = async (reviewId, reviewUsername) => {
       console.log('Attempting to delete review with ID:', reviewId, 'for user:', username);
       console.log('Current session username:', username);
 
-      const response = await fetch('http://10.0.2.2/index2.php/user/delete', {
+      const response = await fetch('http://172.21.48.1/index2.php/user/delete', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -350,7 +350,7 @@ const handleEdit = async (reviewId, reviewUsername) => {
                         );
                       })}
                     </View>
-                    <View style={{ flexDirection: 'row', marginTop: 4 }}> 
+                    <View style={{ flexDirection: 'row', marginTop: 4 }}>
                       <Button
                         title="Edit" //edit and delete buttons are visible on each review so the user can easily choose which one they'd like to edit or delete
                         onPress={() => startEditing(item)}
@@ -427,7 +427,7 @@ const LoginScreen = ({ navigation }) => {
     setLoading(true);
 
     try {
-      const response = await fetch('http://10.0.2.2/index2.php/user/login', {
+      const response = await fetch('http://172.21.48.1/index2.php/user/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -532,7 +532,7 @@ const SignUpScreen = ({ navigation }) => {
     setLoading(true);
 
     try {
-      const response = await fetch('http://10.0.2.2/index2.php/user/signup', {
+      const response = await fetch('http://172.21.48.1/index2.php/user/signup', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -628,13 +628,13 @@ const SignUpScreen = ({ navigation }) => {
 
 const HomeScreen = () => {
   return (
-    <WebView source={{ uri: 'http://10.0.2.2/start1.html' }} />
+    <WebView source={{ uri: 'http://172.21.48.1/start1.html' }} />
   );
 };
 
 const AboutScreen = () => {
   return (
-    <WebView source={{ uri: 'http://10.0.2.2/about1.html' }} />
+    <WebView source={{ uri: 'http://172.21.48.1/about1.html' }} />
   );
 };
 
