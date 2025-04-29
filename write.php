@@ -25,8 +25,8 @@ $meals = $result->fetch_all(MYSQLI_ASSOC);
         <meta name="description" content="Wesleyan University Point budgeter"/>
         <link rel="stylesheet" href="CSScode.css" />
     </head>
-<body id = "font" style="background-color:rgb(243, 70, 70);">
-              <div id="navbar">
+<body id = "demo_font" style="background-color: #f4f4f4;">
+    <div id="navbar" class="light">
                 <ul>
                   <li>User: <?php echo $userid?></li>
                   <li> <?php echo '<a href="reviews.php?userid=' . urlencode($userid) . '">Reviews</a>'?> </li>
@@ -37,46 +37,44 @@ $meals = $result->fetch_all(MYSQLI_ASSOC);
                   <li><?php echo '<a href="logout.php">Log Out</a>'; ?></li>
                 </ul>
               </div>
-              </div>
-    <div id="form">
-      <h1> Write your review for a specific meal offered at a Wesleyan dining location</h1>
-      <form name="form" action="uploadreview.php" method="POST">
-      <input type="hidden" name="userid" value="<?php echo htmlspecialchars($userid); ?>" />
-      <p>
-        <label> Location: </label>
-        <select id="location" name="location">
-          <option value="">Select a location</option>
-          <?php foreach ($locations as $location): ?>
-            <option value="<?php echo htmlspecialchars($location['location']); ?>"><?php echo htmlspecialchars($location['location']); ?></option>
-              <?php endforeach; ?>
-        </select>
-      </p>
-      <p>
-        <label> Meal: </label>
-        <select id="meal" name="meal">
-          <option value="">Select a meal</option>
-          <?php foreach ($meals as $meal): ?>
-            <option value="<?php echo htmlspecialchars($meal['item']); ?>"><?php echo htmlspecialchars($meal['item']); ?></option>
-              <?php endforeach; ?>
-        </select>
-      </p>
+              <div class="demo-container">
+                <h1>Add Review</h1>
+                <form name="form" action="uploadreview.php" method="POST">
+                <input type="hidden" name="userid" value="<?php echo htmlspecialchars($userid); ?>" />
+                    <p style="margin: 20px 0;">
+                    <label>Location:</label>
+                    <select name="location">
+                      <option value="">Select a location</option>
+                      <?php foreach ($locations as $location): ?>
+                        <option value="<?php echo htmlspecialchars($location['location']); ?>"><?php echo htmlspecialchars($location['location']); ?></option>
+                      <?php endforeach; ?>
+                    </select>
+                    </p>
 
-        <p>
-          <label> Rating (1-10:) </label>
-          <input type="number" name="rating" min ="1" max="10" />
-        </p>
+                    <p style="margin: 20px 0;">
+                    <label>Meal:</label>
+                    <select name="meal">
+                      <option value="">Select a meal</option>
+                      <?php foreach ($meals as $meal): ?>
+                        <option value="<?php echo htmlspecialchars($meal['item']); ?>"><?php echo htmlspecialchars($meal['item']); ?></option>
+                      <?php endforeach; ?>
+                    </select>
+                    </p>
 
-        <p>
-  <label>Optional Written Review:</label><br>
-  <textarea name="review_text" rows="5" cols="50" placeholder="Write your review here (optional)"></textarea>
-</p>
+                    <p style="margin: 20px 0;">
+                    <label>Rating (1-10):</label>
+                    <input type="number" name="rating" min="1" max="10" />
+                    </p>
 
-<p>
-  <input type="submit" id="button" value="Post" />
-</p>
+                    <p style="margin: 20px 0;">
+                    <label>Optional Written Review:</label><br>
+                    <textarea name="review_text" rows="5" cols="50" placeholder="Write your review here (optional)"></textarea>
+                    </p>
 
-
-</form>
-</div>
-  </body>
+                    <p style="margin: 20px 0;">
+                    <input type="submit" value="Post" />
+                    </p>
+                </form>
+            </div>
+</body>
 </html>
