@@ -1,4 +1,3 @@
-//shows all reviews posted
 <?php 
 session_start();
 include 'dbconnection.php';
@@ -14,7 +13,7 @@ $showReviews = isset($_GET['reviews']) ? $_GET['reviews'] : 'all'; //to switch b
         <meta name="description" content="Wesleyan University Point budgeter"/>
         <link rel="stylesheet" href="CSScode.css" />
     </head>
-<body id = "font" style="background-color:rgb(32, 31, 31);">
+<body id = "font" style="background-color:rgb(147, 147, 147);">
             <div id="navbar">
                 <ul>
                   <li style="color: white;">User: <?php echo $userid?></li>
@@ -36,7 +35,7 @@ $showReviews = isset($_GET['reviews']) ? $_GET['reviews'] : 'all'; //to switch b
               $num = $result->num_rows;
               while ($row = $result->fetch_assoc()) {
                 echo '<div class="review">';
-                echo "Review ID: " . $row['id'] . " &nbsp;&nbsp;&nbsp; User: " . htmlspecialchars($row['username']) . " &nbsp;&nbsp;&nbsp; Location: " . htmlspecialchars($row['location']) . " &nbsp;&nbsp;&nbsp; Meal: " . htmlspecialchars($row['meal']) . " &nbsp;&nbsp;&nbsp; Rating: " . $row['rating'];
+                echo "Review ID: " . $row['id'] . " &nbsp;&nbsp;&nbsp; User: " . htmlspecialchars($row['username']) . " &nbsp;&nbsp;&nbsp; Location: " . htmlspecialchars($row['location']) . " &nbsp;&nbsp;&nbsp; Meal: " . htmlspecialchars($row['meal']) . " &nbsp;&nbsp;&nbsp; Date Created: " . htmlspecialchars($row['created_at']) . " &nbsp;&nbsp;&nbsp; Rating: " . $row['rating'];
                 echo '</div>';
             }
             $stmt->close();
@@ -50,7 +49,7 @@ $showReviews = isset($_GET['reviews']) ? $_GET['reviews'] : 'all'; //to switch b
               while ($i <= $num){
                 $row = mysqli_fetch_assoc($result);
                 echo '<div class="review">';
-                echo "Review ID: " . $row['id'] . " &nbsp;&nbsp;&nbsp; User: " . htmlspecialchars($row['username']) . " &nbsp;&nbsp;&nbsp; Location: " . htmlspecialchars($row['location']) . " &nbsp;&nbsp;&nbsp; Meal: " . htmlspecialchars($row['meal']) . " &nbsp;&nbsp;&nbsp; Rating: " . $row['rating'] . "<br><br>";
+                echo "Review ID: " . $row['id'] . " &nbsp;&nbsp;&nbsp; User: " . htmlspecialchars($row['username']) . " &nbsp;&nbsp;&nbsp; Location: " . htmlspecialchars($row['location']) . " &nbsp;&nbsp;&nbsp; Meal: " . htmlspecialchars($row['meal']) . " &nbsp;&nbsp;&nbsp; Date Created: " . htmlspecialchars($row['created_at']) . " &nbsp;&nbsp;&nbsp; Rating: " . $row['rating'];
                 echo '</div>';
                 $i = $i+1;
             }
