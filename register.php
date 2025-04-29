@@ -25,6 +25,9 @@ if ($userid == '' or $password == '' or $password2 == '') {
     echo "Both passwords do not match. Please try again.<br>";
     echo "<a href=\"index.php\">Return to register page</a>";
   }
+  elseif(strlen($password)< 10 ){
+    echo "The password must be at least 10 characters";
+  }
   else{
     $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
