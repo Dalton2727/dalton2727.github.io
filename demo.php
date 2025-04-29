@@ -2,14 +2,23 @@
 session_start();
 include 'dbconnection.php';
 
+// Debug session
+error_log("Demo.php - Session userid: " . (isset($_SESSION['userid']) ? $_SESSION['userid'] : 'not set'));
+error_log("Demo.php - Session data: " . print_r($_SESSION, true));
+
+// Ensure userid is set in session
+if (!isset($_SESSION['userid']) && isset($_GET['userid'])) {
+    $_SESSION['userid'] = $_GET['userid'];
+    error_log("Demo.php - Set userid from GET: " . $_GET['userid']);
+}
 
 $userid = $_SESSION['userid'];
 
 if (!isset($_SESSION['budget'])) {
-    $_SESSION['budget'] = 500; 
+    $_SESSION['budget'] = 500.00; 
 }
 if (!isset($_SESSION['spent'])) {
-    $_SESSION['spent'] = 0; 
+    $_SESSION['spent'] = 0.00; 
 }
 if (!isset($_SESSION['remaining'])) {
     $_SESSION['remaining'] = $_SESSION['budget'] - $_SESSION['spent'];
@@ -47,6 +56,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         foreach ($menu_items as $item) {
             if ($item['item'] === $selected_item) {
                 $_SESSION['remaining'] -= $item['price'];
+                $_SESSION['spent'] += $item['price'];
                 break;
             }
         }
@@ -97,25 +107,52 @@ $percentageSpent = min($percentageSpent, 100);
             <p>Remaining: $<?php echo $remaining; ?></p>
         </div>
 
-        <form action="" method="POST" class="demo-form">
+        <form action="update_history.php" method="POST" class="demo-form">
+            <?php 
+            error_log("Session userid: " . (isset($_SESSION['userid']) ? $_SESSION['userid'] : 'not set'));
+            ?>
+            <input type="hidden" name="user_id" value="<?php echo htmlspecialchars($_SESSION['userid']); ?>">
             <label for="budget">Set your monthly budget: </label>
-            <input type="number" id="budget" name="budget" value="<?php echo $budget; ?>" min="0">
+            <input type="number" id="budget" name="budget" value="<?php echo number_format($budget, 2); ?>" min="0.00" step="0.01">
             
             <label for="spent">Amount spent: </label>
-            <input type="number" id="spent" name="spent" value="<?php echo $spent; ?>" min="0">
+            <input type="number" id="spent" name="spent" value="<?php echo number_format($spent, 2); ?>" min="0.00" step="0.01">
 
             <label for="menu_item">Purchase an item: </label>
             <select id="menu_item" name="menu_item">
                 <option value="" disabled selected>Select an item</option> 
                 <?php foreach ($menu_items as $item): ?>
-                    <option value="<?php echo htmlspecialchars($item['item']); ?>">
+                    <option value="<?php echo htmlspecialchars($item['item']); ?>" data-price="<?php echo $item['price']; ?>">
                         <?php echo htmlspecialchars($item['item']) . " - $" . number_format($item['price'], 2); ?>
                     </option>
                 <?php endforeach; ?>
             </select>
+            <input type="hidden" name="item_name" id="item_name">
+            <input type="hidden" name="item_price" id="item_price">
 
             <input type="submit" value="Update">
         </form>
     </div>
+
+    <script>
+        document.getElementById('menu_item').addEventListener('change', function() {
+            const selectedOption = this.options[this.selectedIndex];
+            if (selectedOption.value) {
+                document.getElementById('item_name').value = selectedOption.value;
+                document.getElementById('item_price').value = selectedOption.dataset.price;
+                console.log('Selected item:', selectedOption.value, 'Price:', selectedOption.dataset.price);
+            }
+        });
+
+        // Also set values when form is submitted
+        document.querySelector('form').addEventListener('submit', function(e) {
+            const menuItem = document.getElementById('menu_item');
+            const selectedOption = menuItem.options[menuItem.selectedIndex];
+            if (selectedOption.value) {
+                document.getElementById('item_name').value = selectedOption.value;
+                document.getElementById('item_price').value = selectedOption.dataset.price;
+            }
+        });
+    </script>
 </body>
 </html>
