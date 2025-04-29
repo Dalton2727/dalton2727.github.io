@@ -67,8 +67,15 @@ $meals = $result->fetch_all(MYSQLI_ASSOC);
         </p>
 
         <p>
-          <input type="submit" id="button" value="Post" />
-        </p>
+  <label>Optional Written Review:</label><br>
+  <textarea name="review_text" rows="5" cols="50" placeholder="Write your review here (optional)"></textarea>
+</p>
+
+<p>
+  <input type="submit" id="button" value="Post" />
+</p>
+
+
 </form>
 </div>
   </body>
