@@ -128,15 +128,16 @@ CREATE TABLE user_budget (
     user_id INT NOT NULL,
     month VARCHAR(20) NOT NULL,
     monthly_budget DECIMAL(10, 2) NOT NULL,
-    remaining_budget DECIMAL(10, 2) NOT NULL
+    remaining_budget DECIMAL(10, 2) NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE purchases (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
-    month VARCHAR(20) NOT NULL,
     item_name VARCHAR(255) NOT NULL,
-    item_price DECIMAL(10, 2) NOT NULL
+    item_price DECIMAL(10, 2) NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
 ALTER TABLE reviews
