@@ -27,19 +27,20 @@ while ($row = mysqli_fetch_assoc($result)) {
         <meta name="description" content="Wesleyan University Point budgeter"/>
         <link rel="stylesheet" href="CSScode.css" />
     </head>
-<body id = "demo_font" style="background-color: #f4f4f4;">
-            <div id="navbar" class="light"">
+<body id = "font" style="background-color:rgb(243, 70, 70);">
+    <div id="navbar">
                 <ul>
                   <li>User: <?php echo $userid?></li>
                   <li> <?php echo '<a href="reviews.php?userid=' . urlencode($userid) . '">Reviews</a>'?> </li>
+                  <li> <?php echo '<a href="ratings.php?userid=' . urlencode($userid) . '">Ratings</a>'?> </li>
                   <li> <?php echo '<a href="Edit.php?userid=' . urlencode($userid) . '">Edit</a>'?> </li>
                   <li> <?php echo '<a href="write.php?userid=' . urlencode($userid) . '">Write</a>'?> </li>
-                  <li> <?php echo '<a href="demo.php?userid=' . urlencode($userid) . '">Start</a>'?> </li>
                   <li> <?php echo '<a href="start2.php?userid=' . urlencode($userid) . '">Home</a>'?> </li>
                   <li><?php echo '<a href="logout.php">Log Out</a>'; ?></li>
                 </ul>
               </div>
-              <div class = "demo-container">
+              <div>
+                <h1> Type in the id of the review you want to edit and what you want to change for the location, meal, and/or rating</h1>
                 <form name="form" action="editrev.php" method="POST">
                 <input type="hidden" name="userid" value="<?php echo htmlspecialchars($userid); ?>" />
                     <p>
@@ -80,7 +81,7 @@ while ($row = mysqli_fetch_assoc($result)) {
             <input type="hidden" name="userid" value="<?php echo htmlspecialchars($userid); ?>" />
                     <p>
                     <label> If you want to delete a review, type its id here: </label>
-                    <input type="number" name="revbar" min ="1" max="99999" />
+                    <input type="number" name="revid" min ="1" max="99999" />
                     </p>
 
                     <p>
