@@ -41,6 +41,12 @@ Rest API:
 
 The Rest API of our app functions through the Controller/Api, inc, and Model folders as well as the index2.php. The UpdateModel.php file in the Model folder updates the tables we call from our database through the CRUD and login/sign in functionalities. In the Model folder, the Database.php handles all connections with the Database and creates methods for executing SQL queries. In the Controller/Api folder, the BaseController.php deals with error, request, and response handling as well as session management. The UserController.php extends BaseController.php to implement specific endpoints and uses UserModel.php to interact with the database. Within the inc folder, config.php contains the configuration settings for the database and bootstrap.php is for the intialization and setup. Then through the index2.php, the main entry point, we process endpoint calls (i.e. /index2.php/user/list) and then matches them up with certain functions/commands on how the computer should handle these calls accordingly. We have several endpoints such as /user/login and /user/addreview that the App.js uses to call on the REST API.
 
+Running the unit tests:
+First make sure that homebrew, phpUnit, composer, and php are installed
+Inside the htdocs folder, create a folder called "test-project" and run "composer init" in this folder following the testing setup (skipping most lines, for define dev dependencies, write phpunit/phpunit). Then, inside the test-project folder, make a folder called "tests". Place the 4 testing php files (testGet_UserList.php, testPost_CreateUser.php, testPost_FailedLogin.php, testPost_LoginUser.php) inside the tests folder. You can run the tests with php vendor/bin/phpunit tests/"name of test php file"
+
+
+
 SQL code:
 
 CREATE TABLE users (username VARCHAR(255) PRIMARY KEY, password TEXT);
