@@ -139,3 +139,5 @@ CREATE TABLE purchases (
     item_price DECIMAL(10, 2) NOT NULL
 );
 
+ALTER TABLE your_table_name
+ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP;
