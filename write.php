@@ -1,4 +1,3 @@
-//to write the reviews
 <?php 
 session_start();
 include 'dbconnection.php';
@@ -27,23 +26,23 @@ $meals = $result->fetch_all(MYSQLI_ASSOC);
         <link rel="stylesheet" href="CSScode.css" />
     </head>
 <body id = "font" style="background-color:rgb(243, 70, 70);">
-            <div id="navbar">
+              <div id="navbar">
                 <ul>
-                  //different navbar here and on edit and reviews pages vs the home and about pages in order to access reviews
-                  <li style="color: white;">User: <?php echo $userid?></li>
+                  <li>User: <?php echo $userid?></li>
                   <li> <?php echo '<a href="reviews.php?userid=' . urlencode($userid) . '">Reviews</a>'?> </li>
+                  <li> <?php echo '<a href="ratings.php?userid=' . urlencode($userid) . '">Ratings</a>'?> </li>
                   <li> <?php echo '<a href="Edit.php?userid=' . urlencode($userid) . '">Edit</a>'?> </li>
                   <li> <?php echo '<a href="write.php?userid=' . urlencode($userid) . '">Write</a>'?> </li>
                   <li> <?php echo '<a href="start2.php?userid=' . urlencode($userid) . '">Home</a>'?> </li>
                   <li><?php echo '<a href="logout.php">Log Out</a>'; ?></li>
                 </ul>
               </div>
+              </div>
     <div id="form">
       <h1> Write your review for a specific meal offered at a Wesleyan dining location</h1>
       <form name="form" action="uploadreview.php" method="POST">
       <input type="hidden" name="userid" value="<?php echo htmlspecialchars($userid); ?>" />
       <p>
-        //allows user to choose between menu locations included in Menu SQL table
         <label> Location: </label>
         <select id="location" name="location">
           <option value="">Select a location</option>
@@ -52,7 +51,6 @@ $meals = $result->fetch_all(MYSQLI_ASSOC);
               <?php endforeach; ?>
         </select>
       </p>
-            //allows user to choose between menu items included in Menu SQL table
       <p>
         <label> Meal: </label>
         <select id="meal" name="meal">
@@ -64,7 +62,6 @@ $meals = $result->fetch_all(MYSQLI_ASSOC);
       </p>
 
         <p>
-          //makes sure rating is only between 1-10
           <label> Rating (1-10:) </label>
           <input type="number" name="rating" min ="1" max="10" />
         </p>
