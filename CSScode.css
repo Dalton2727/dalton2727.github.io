@@ -211,6 +211,19 @@ body {
     margin-bottom: 20px;
 }
 
+.demo-container form p {
+  text-align: center;
+  color: #333;
+  margin-top: 60px;
+  margin-bottom: 60px;
+  padding: 20px;
+  display: block;
+  clear: both;
+  border: 1px solid #ddd;
+  background-color: #f8f8f8;
+  border-radius: 5px;
+}
+
 .progress-container {
     width: 100%;
     background-color: #e0e0e0;
