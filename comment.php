@@ -47,7 +47,7 @@ while ($row = mysqli_fetch_assoc($result)) {
                     
                     <p style="margin: 20px 0;">
                         <label>ID of review you want to comment on:</label>
-                        <input type="number" name="revid" required />
+                        <input type="number" name="revid" value="<?php echo isset($_GET['revid']) ? intval($_GET['revid']) : ''; ?>" required />
                     </p>
 
                     <p style="margin: 20px 0;">
