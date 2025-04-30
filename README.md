@@ -141,3 +141,9 @@ ADD COLUMN review_text TEXT;
 
 ALTER TABLE reviews
 ADD COLUMN comment_text TEXT;
+
+ALTER TABLE purchases
+DROP COLUMN month;
+
+ALTER TABLE purchases
+ADD COLUMN budget DECIMAL(10, 2);
