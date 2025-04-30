@@ -123,22 +123,15 @@ INSERT INTO Menu (location, category, item, price) VALUES
 ('RBC', 'Breakfast', 'CARDINAL BREAKFAST', 11.99),
 ('RBC', 'Breakfast', 'TOASTED BAGEL WITH CREAM CHEESE', 2.99);
 
-CREATE TABLE user_budget (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id INT NOT NULL,
-    month VARCHAR(20) NOT NULL,
-    monthly_budget DECIMAL(10, 2) NOT NULL,
-    remaining_budget DECIMAL(10, 2) NOT NULL,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-);
-
 CREATE TABLE purchases (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id VARCHAR(255),
     item_name VARCHAR(255) NOT NULL,
     item_price DECIMAL(10, 2) NOT NULL,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    budget DECIMAL(10, 2)
 );
+
 
 ALTER TABLE reviews
 ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP;
