@@ -103,7 +103,10 @@ while ($row = mysqli_fetch_assoc($result)) {
                     }
                     </script>
                     </p>
-
+                    <p style="margin: 20px 0;">
+                    <label>Optional Written Review:</label><br>
+                    <textarea name="review_text" rows="5" cols="50" placeholder="Write your review here (optional)"></textarea>
+                    </p>
                     <p style="margin: 20px 0;">
                     <input type="submit" value="Finalize" />
                     </p>
