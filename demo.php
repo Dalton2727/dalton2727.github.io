@@ -24,6 +24,7 @@ if (!isset($_SESSION['remaining'])) {
     $_SESSION['remaining'] = $_SESSION['budget'] - $_SESSION['spent'];
 }
 
+
 $query = "SELECT DISTINCT location FROM Menu";
 $stmt = $db->prepare($query);
 $stmt->execute();
@@ -135,6 +136,68 @@ $percentageSpent = min($percentageSpent, 100);
     </div>
 
     <script>
+        // Function to update the page with new values
+        function updatePageValues(data) {
+            try {
+                // Convert values to numbers to ensure proper calculations
+                const budget = parseFloat(data.budget) || 500.00;
+                const totalSpent = parseFloat(data.total_spent) || 0.00;
+                const remaining = parseFloat(data.remaining) || budget;
+                
+                console.log('Updating page with values:', { budget, totalSpent, remaining });
+                
+                // Update budget info
+                const budgetInfo = document.querySelector('.budget-info');
+                if (budgetInfo) {
+                    const paragraphs = budgetInfo.querySelectorAll('p');
+                    if (paragraphs.length >= 3) {
+                        paragraphs[0].textContent = 'Budget: $' + budget.toFixed(2);
+                        paragraphs[1].textContent = 'Spent: $' + totalSpent.toFixed(2);
+                        paragraphs[2].textContent = 'Remaining: $' + remaining.toFixed(2);
+                    }
+                }
+                
+                // Update progress bar
+                const progressBar = document.querySelector('.progress-bar');
+                if (progressBar) {
+                    const percentageSpent = (totalSpent / budget) * 100;
+                    progressBar.style.width = percentageSpent + '%';
+                    progressBar.textContent = percentageSpent.toFixed(2) + '% Spent';
+                }
+                
+                // Update session variables in the form
+                const budgetInput = document.getElementById('budget');
+                const spentInput = document.getElementById('spent');
+                if (budgetInput) budgetInput.value = budget.toFixed(2);
+                if (spentInput) spentInput.value = totalSpent.toFixed(2);
+            } catch (error) {
+                console.error('Error in updatePageValues:', error);
+                throw error;
+            }
+        }
+
+        // Function to check for updates
+        function checkForUpdates() {
+            fetch('get_budget_info.php')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        updatePageValues(data);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error checking for updates:', error);
+                });
+        }
+
+        // Load initial values immediately when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            checkForUpdates();
+        });
+
+        // Check for updates every 5 seconds
+        setInterval(checkForUpdates, 5000);
+
         document.getElementById('menu_item').addEventListener('change', function() {
             const selectedOption = this.options[this.selectedIndex];
             if (selectedOption.value) {
@@ -144,14 +207,73 @@ $percentageSpent = min($percentageSpent, 100);
             }
         });
 
-        // Also set values when form is submitted
+        // Handle form submission with AJAX
         document.querySelector('form').addEventListener('submit', function(e) {
+            e.preventDefault(); // Prevent form submission
+            
             const menuItem = document.getElementById('menu_item');
             const selectedOption = menuItem.options[menuItem.selectedIndex];
-            if (selectedOption.value) {
-                document.getElementById('item_name').value = selectedOption.value;
-                document.getElementById('item_price').value = selectedOption.dataset.price;
+            
+            if (!selectedOption.value) {
+                alert('Please select an item to purchase');
+                return;
             }
+            
+            // Set the hidden fields
+            const itemName = selectedOption.value;
+            const itemPrice = selectedOption.dataset.price;
+            
+            document.getElementById('item_name').value = itemName;
+            document.getElementById('item_price').value = itemPrice;
+            
+            console.log('Submitting purchase:', {
+                item_name: itemName,
+                item_price: itemPrice
+            });
+
+            // Create FormData object
+            const formData = new FormData(this);
+
+            // Send AJAX request
+            fetch('update_history.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok: ' + response.status);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Response data:', data);
+                
+                if (data.error) {
+                    alert(data.error);
+                    return;
+                }
+                
+                if (!data.success) {
+                    console.error('Unexpected response format:', data);
+                    alert('An error occurred while processing your purchase. Please try again.');
+                    return;
+                }
+                
+                try {
+                    // Update the page with new values
+                    updatePageValues(data);
+                    
+                    // Reset form
+                    this.reset();
+                } catch (error) {
+                    console.error('Error updating page:', error);
+                    alert('An error occurred while updating the page. The purchase was successful, but the display may not be updated.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while updating your purchase. Please try again.');
+            });
         });
     </script>
 </body>
