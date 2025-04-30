@@ -211,6 +211,19 @@ body {
     margin-bottom: 20px;
 }
 
+.demo-container form p {
+  text-align: center;
+  color: #333;
+  margin-top: 60px;
+  margin-bottom: 60px;
+  padding: 20px;
+  display: block;
+  clear: both;
+  border: 1px solid #ddd;
+  background-color: #f8f8f8;
+  border-radius: 5px;
+}
+
 .progress-container {
     width: 100%;
     background-color: #e0e0e0;
@@ -285,6 +298,62 @@ body {
 
 .demo-form input[type="submit"]:hover {
     background-color: #5da8a2;
+}
+
+/* Rating system styles */
+.rating {
+    display: inline-flex;
+    flex-direction: row-reverse;
+    gap: 5px;
+}
+
+.rating .star {
+    cursor: pointer;
+    font-size: 30px;
+    color: #ddd;
+    transition: color 0.2s;
+}
+
+.rating .star:hover,
+.rating .star:hover ~ .star,
+.rating .star.selected {
+    color: #FFD700;
+}
+
+/* Review display styles */
+.star-rating {
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+}
+
+.star {
+    cursor: pointer;
+    font-size: 50px;
+    color: #ddd;
+    user-select: none;
+}
+
+.star:hover {
+    color: #FFD700;
+}
+
+/* Review styles */
+.review {
+    background-color: white;
+    border-radius: 10px;
+    padding: 20px;
+    margin: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.review-info {
+    margin-bottom: 10px;
+    color: #666;
+}
+
+.review-content {
+    margin-top: 10px;
 }
 
 /*   Copyright [2025] [Tara Pandey and Dalton Soper]
