@@ -67,7 +67,7 @@ $meals = $result->fetch_all(MYSQLI_ASSOC);
                     <p style="margin: 20px 0;">
 
                     <div class="star-rating">
-                        <label>Rating:</label>
+                    <label>Rating:</label>
                         <span class="star" onclick="setRating(1)">☆</span>
                         <span class="star" onclick="setRating(2)">☆</span>
                         <span class="star" onclick="setRating(3)">☆</span>
@@ -95,10 +95,6 @@ $meals = $result->fetch_all(MYSQLI_ASSOC);
                         });
                     }
                     </script>
-
-                    <label>Rating (1-10):</label>
-                    <input type="number" name="rating" min="1" max="10" />
-
                     </p>
 
                     <p style="margin: 20px 0;">
