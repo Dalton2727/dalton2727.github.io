@@ -114,10 +114,34 @@ while ($row = mysqli_fetch_assoc($result)) {
 
                 $avg_stmt->close();
                 ?>
-
-
-
               </div>
+              <div>
+                <?php
+                $top_query = "
+                    SELECT r.meal AS item, ROUND(AVG(r.rating), 2) AS avg_rating, COUNT(r.rating) AS total_reviews
+                    FROM reviews r
+                    GROUP BY r.meal
+                    HAVING total_reviews > 0
+                    ORDER BY avg_rating DESC
+                    LIMIT 5;
+                ";
+
+                $top_result = mysqli_query($db, $top_query);
+
+                if ($top_result && mysqli_num_rows($top_result) > 0) {
+                    echo "<h3>Top Rated Meals</h3>";
+                    while ($row = mysqli_fetch_assoc($top_result)) {
+                        echo '<div class="review">';
+                        echo "<strong>" . htmlspecialchars($row['item']) . "</strong>: " . 
+                            $row['avg_rating'] . "/10 (" . $row['total_reviews'] . " reviews)";
+                        echo "</div>";
+                    }
+                } else {
+                    echo "<p>No top rated meals found.</p>";
+                }
+                ?>
+                </div>
+
 
 </body>
 </html>
