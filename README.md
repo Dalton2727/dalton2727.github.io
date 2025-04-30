@@ -145,5 +145,5 @@ ADD COLUMN comment_text TEXT;
 ALTER TABLE purchases
 DROP COLUMN month;
 
-ALTER TABLE purchases
+ALTER TABLE users
 ADD COLUMN budget DECIMAL(10, 2);
