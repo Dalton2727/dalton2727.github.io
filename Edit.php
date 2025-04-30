@@ -47,7 +47,7 @@ while ($row = mysqli_fetch_assoc($result)) {
                 <input type="hidden" name="userid" value="<?php echo htmlspecialchars($userid); ?>" />
                     <p style="margin: 20px 0;">
                     <label> ID of review you want to edit: </label>
-                    <input type="number" name="revid" />
+                    <input type="number" name="revid" value="<?php echo isset($_GET['revid']) ? intval($_GET['revid']) : ''; ?>" required />
                     </p>
 
                     <p style="margin: 20px 0;">
@@ -112,7 +112,7 @@ while ($row = mysqli_fetch_assoc($result)) {
             <input type="hidden" name="userid" value="<?php echo htmlspecialchars($userid); ?>" />
                     <p style="margin: 20px 0;">
                     <label> If you want to delete a review, type its id here: </label>
-                    <input type="number" name="revbar" min ="1" max="99999" />
+                    <input type="number" name="revid" value="<?php echo isset($_GET['revid']) ? intval($_GET['revid']) : ''; ?>" required />
                     </p>
 
                     <p style="margin: 20px 0;">
