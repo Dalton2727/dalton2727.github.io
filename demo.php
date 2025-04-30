@@ -1,6 +1,21 @@
 <?php
+// Enable error reporting
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 session_start();
+
+// Check if dbconnection.php exists and include it
+if (!file_exists('dbconnection.php')) {
+    die("Error: dbconnection.php file not found");
+}
+
 include 'dbconnection.php';
+
+// Check if database connection is successful
+if (!$db) {
+    die("Error: Could not connect to database. " . mysqli_connect_error());
+}
 
 // Debug session
 error_log("Demo.php - Session userid: " . (isset($_SESSION['userid']) ? $_SESSION['userid'] : 'not set'));
@@ -12,8 +27,13 @@ if (!isset($_SESSION['userid']) && isset($_GET['userid'])) {
     error_log("Demo.php - Set userid from GET: " . $_GET['userid']);
 }
 
+if (!isset($_SESSION['userid'])) {
+    die("Error: User not logged in");
+}
+
 $userid = $_SESSION['userid'];
 
+// Initialize session variables if not set
 if (!isset($_SESSION['budget'])) {
     $_SESSION['budget'] = 500.00; 
 }
@@ -24,50 +44,32 @@ if (!isset($_SESSION['remaining'])) {
     $_SESSION['remaining'] = $_SESSION['budget'] - $_SESSION['spent'];
 }
 
-
-$query = "SELECT DISTINCT location FROM Menu";
-$stmt = $db->prepare($query);
-$stmt->execute();
-$result = $stmt->get_result();
-$locations = $result->fetch_all(MYSQLI_ASSOC);
-
-$query = "SELECT DISTINCT category FROM Menu";
-$stmt = $db->prepare($query);
-$stmt->execute();
-$result = $stmt->get_result();
-$categories = $result->fetch_all(MYSQLI_ASSOC);
-
+// Get menu items from database
 $query = "SELECT item, price FROM Menu";
-$stmt = $db->prepare($query);
-$stmt->execute();
-$result = $stmt->get_result();
-$menu_items = $result->fetch_all(MYSQLI_ASSOC);
-
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    if (isset($_POST['budget'])) {
-        $_SESSION['budget'] = $_POST['budget']; 
-        $_SESSION['remaining'] = $_SESSION['budget'] - $_SESSION['spent']; 
-    }
-    if (isset($_POST['spent'])) {
-        $_SESSION['spent'] = $_POST['spent'];
-        $_SESSION['remaining'] = $_SESSION['budget'] - $_SESSION['spent']; 
-    }
-    if (isset($_POST['menu_item'])) {
-        $selected_item = $_POST['menu_item'];
-        foreach ($menu_items as $item) {
-            if ($item['item'] === $selected_item) {
-                $_SESSION['remaining'] -= $item['price'];
-                $_SESSION['spent'] += $item['price'];
-                break;
-            }
-        }
-    }
+$stmt = mysqli_prepare($db, $query);
+if (!$stmt) {
+    error_log("Error preparing menu query: " . mysqli_error($db));
+    die("Error preparing menu query: " . mysqli_error($db));
 }
+
+if (!mysqli_stmt_execute($stmt)) {
+    error_log("Error executing menu query: " . mysqli_stmt_error($stmt));
+    die("Error executing menu query: " . mysqli_stmt_error($stmt));
+}
+
+$result = mysqli_stmt_get_result($stmt);
+if (!$result) {
+    error_log("Error getting result: " . mysqli_error($db));
+    die("Error getting result: " . mysqli_error($db));
+}
+
+$menu_items = mysqli_fetch_all($result, MYSQLI_ASSOC);
+mysqli_stmt_close($stmt);
 
 $budget = $_SESSION['budget'];
 $spent = $_SESSION['spent'];
 $remaining = $_SESSION['remaining'];
-$percentageSpent = ($spent / $budget) * 100;
+$percentageSpent = ($budget > 0) ? ($spent / $budget) * 100 : 0;
 $percentageSpent = min($percentageSpent, 100); 
 ?>
 
@@ -82,7 +84,7 @@ $percentageSpent = min($percentageSpent, 100);
 <body id="demo_body">
     <div id="navbar" class="light">
         <ul>
-            <li style= "color: black" >User: <?php echo $userid?></li>
+            <li style= "color: black" >User: <?php echo htmlspecialchars($userid); ?></li>
             <li> <?php echo '<a href="demo.php?userid=' . urlencode($userid) . '">Start</a>'?> </li>
             <li> <?php echo '<a href="start2.php?userid=' . urlencode($userid) . '">Home</a>'?> </li>
             <li> <?php echo '<a href="about2.php?userid=' . urlencode($userid) . '#about">About</a>'; ?> </li>
@@ -103,15 +105,12 @@ $percentageSpent = min($percentageSpent, 100);
         </div>
 
         <div class="budget-info">
-            <p>Budget: $<?php echo $budget; ?></p>
-            <p>Spent: $<?php echo $spent; ?></p>
-            <p>Remaining: $<?php echo $remaining; ?></p>
+            <p>Budget: $<?php echo number_format($budget, 2); ?></p>
+            <p>Spent: $<?php echo number_format($spent, 2); ?></p>
+            <p>Remaining: $<?php echo number_format($remaining, 2); ?></p>
         </div>
 
         <form action="update_history.php" method="POST" class="demo-form">
-            <?php 
-            error_log("Session userid: " . (isset($_SESSION['userid']) ? $_SESSION['userid'] : 'not set'));
-            ?>
             <input type="hidden" name="user_id" value="<?php echo htmlspecialchars($_SESSION['userid']); ?>">
             <label for="budget">Set your monthly budget: </label>
             <input type="number" id="budget" name="budget" value="<?php echo number_format($budget, 2); ?>" min="0.00" step="0.01">
@@ -142,7 +141,7 @@ $percentageSpent = min($percentageSpent, 100);
                 // Convert values to numbers to ensure proper calculations
                 const budget = parseFloat(data.budget) || 500.00;
                 const totalSpent = parseFloat(data.total_spent) || 0.00;
-                const remaining = parseFloat(data.remaining) || budget;
+                const remaining = budget - totalSpent; // Calculate remaining based on budget and total spent
                 
                 console.log('Updating page with values:', { budget, totalSpent, remaining });
                 
@@ -165,11 +164,19 @@ $percentageSpent = min($percentageSpent, 100);
                     progressBar.textContent = percentageSpent.toFixed(2) + '% Spent';
                 }
                 
-                // Update session variables in the form
+                // Update form inputs with current values
                 const budgetInput = document.getElementById('budget');
                 const spentInput = document.getElementById('spent');
-                if (budgetInput) budgetInput.value = budget.toFixed(2);
-                if (spentInput) spentInput.value = totalSpent.toFixed(2);
+                if (budgetInput) {
+                    budgetInput.value = budget.toFixed(2);
+                    // Store the current value as the default value for future comparisons
+                    budgetInput.defaultValue = budget.toFixed(2);
+                }
+                if (spentInput) {
+                    spentInput.value = totalSpent.toFixed(2);
+                    // Store the current value as the default value for future comparisons
+                    spentInput.defaultValue = totalSpent.toFixed(2);
+                }
             } catch (error) {
                 console.error('Error in updatePageValues:', error);
                 throw error;
@@ -179,10 +186,17 @@ $percentageSpent = min($percentageSpent, 100);
         // Function to check for updates
         function checkForUpdates() {
             fetch('get_budget_info.php')
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok: ' + response.status);
+                    }
+                    return response.json();
+                })
                 .then(data => {
                     if (data.success) {
                         updatePageValues(data);
+                    } else {
+                        console.error('Error in response:', data.error);
                     }
                 })
                 .catch(error => {
@@ -190,13 +204,10 @@ $percentageSpent = min($percentageSpent, 100);
                 });
         }
 
-        // Load initial values immediately when page loads
+        // Load initial values when page loads
         document.addEventListener('DOMContentLoaded', function() {
             checkForUpdates();
         });
-
-        // Check for updates every 5 seconds
-        setInterval(checkForUpdates, 5000);
 
         document.getElementById('menu_item').addEventListener('change', function() {
             const selectedOption = this.options[this.selectedIndex];
@@ -213,7 +224,53 @@ $percentageSpent = min($percentageSpent, 100);
             
             const menuItem = document.getElementById('menu_item');
             const selectedOption = menuItem.options[menuItem.selectedIndex];
+            const newBudget = document.getElementById('budget').value;
+            const newSpent = document.getElementById('spent').value;
             
+            // Create FormData object
+            const formData = new FormData(this);
+            
+            // If no item is selected but budget or spent is changed, update those values
+            if (!selectedOption.value && (newBudget !== this.querySelector('[name="budget"]').defaultValue || 
+                                        newSpent !== this.querySelector('[name="spent"]').defaultValue)) {
+                console.log('Updating budget/spent values:', { newBudget, newSpent });
+                
+                // Send AJAX request to update budget
+                fetch('update_budget.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok: ' + response.status);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Budget update response:', data);
+                    
+                    if (data.error) {
+                        alert(data.error);
+                        return;
+                    }
+                    
+                    if (data.success) {
+                        // Update the display with new values
+                        updatePageValues(data);
+                        // Reset form
+                        this.reset();
+                        // Show success message
+                        alert('Budget updated successfully!');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error updating budget:', error);
+                    alert('An error occurred while updating the budget. Please try again.');
+                });
+                return;
+            }
+            
+            // If an item is selected, proceed with purchase
             if (!selectedOption.value) {
                 alert('Please select an item to purchase');
                 return;
@@ -231,10 +288,7 @@ $percentageSpent = min($percentageSpent, 100);
                 item_price: itemPrice
             });
 
-            // Create FormData object
-            const formData = new FormData(this);
-
-            // Send AJAX request
+            // Send AJAX request for purchase
             fetch('update_history.php', {
                 method: 'POST',
                 body: formData
@@ -246,7 +300,7 @@ $percentageSpent = min($percentageSpent, 100);
                 return response.json();
             })
             .then(data => {
-                console.log('Response data:', data);
+                console.log('Purchase response:', data);
                 
                 if (data.error) {
                     alert(data.error);

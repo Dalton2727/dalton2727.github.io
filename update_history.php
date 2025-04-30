@@ -17,6 +17,7 @@ if (empty($user_id)) {
 
 $name = isset($_POST['item_name']) ? $_POST['item_name'] : '';
 $price = isset($_POST['item_price']) ? $_POST['item_price'] : '';
+$budget = isset($_SESSION['budget']) ? $_SESSION['budget'] : 500.00;
 
 // Debug: Print individual values
 error_log("Final values - user_id: " . $user_id);
@@ -35,7 +36,7 @@ try {
     }
     
     // Get current budget from session
-    $budget = isset($_SESSION['budget']) ? $_SESSION['budget'] : 500.00;
+    #$budget = isset($_SESSION['budget']) ? $_SESSION['budget'] : 500.00;
     
     // Get current total spent from purchases table
     $spent_sql = "SELECT COALESCE(SUM(item_price), 0) as total_spent FROM purchases WHERE user_id = ?";
@@ -69,6 +70,13 @@ try {
         exit;
     }
     
+    //Insert budget update
+    /*
+    $budget_sql = "INSERT INTO users (username, budget) VALUES (?, ?, ?)";
+    error_log("SQL: " . $budget_sql);
+    error_log("Values: username=" . $user_id . ", budget=" . $difference);
+    */
+
     // Insert purchase
     $sql = "INSERT INTO purchases (user_id, item_name, item_price) VALUES (?, ?, ?)";
     error_log("SQL: " . $sql);
