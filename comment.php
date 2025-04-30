@@ -27,8 +27,8 @@ while ($row = mysqli_fetch_assoc($result)) {
         <meta name="description" content="Wesleyan University Point budgeter"/>
         <link rel="stylesheet" href="CSScode.css" />
     </head>
-<body id = "font" style="background-color:rgb(243, 70, 70);">
-    <div id="navbar">
+<body id = "demo_font" style="background-color: #f4f4f4;">
+    <div id="navbar" class="light">
                 <ul>
                   <li>User: <?php echo $userid?></li>
                   <li> <?php echo '<a href="reviews.php?userid=' . urlencode($userid) . '">Reviews</a>'?> </li>
@@ -40,22 +40,22 @@ while ($row = mysqli_fetch_assoc($result)) {
                   <li><?php echo '<a href="logout.php">Log Out</a>'; ?></li>
                 </ul>
               </div>
-              <div>
-              <h1>Type in the ID of the review you want to comment on and what you want your comment to say</h1>
+              <div class = "demo-container">
+              <h1>Add Comment</h1>
                 <form name="form" action="addcomment.php" method="POST">
                     <input type="hidden" name="userid" value="<?php echo htmlspecialchars($userid); ?>" />
                     
-                    <p>
+                    <p style="margin: 20px 0;">
                         <label>ID of review you want to comment on:</label>
                         <input type="number" name="revid" required />
                     </p>
 
-                    <p>
+                    <p style="margin: 20px 0;">
                         <label>Comment:</label>
                         <textarea name="comment_text" rows="5" cols="50" placeholder="Write your comment here" required></textarea>
                     </p>
 
-                    <p>
+                    <p style="margin: 20px 0;"9>
                         <input type="submit" value="Submit Comment" />
                     </p>
                 </form>
