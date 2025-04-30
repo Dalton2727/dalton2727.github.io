@@ -21,6 +21,7 @@ $showReviews = isset($_GET['reviews']) ? $_GET['reviews'] : 'all'; //to switch b
                   <li> <?php echo '<a href="reviews.php?userid=' . urlencode($userid) . '">Reviews</a>'?> </li>
                   <li> <?php echo '<a href="ratings.php?userid=' . urlencode($userid) . '">Ratings</a>'?> </li>
                   <li> <?php echo '<a href="Edit.php?userid=' . urlencode($userid) . '">Edit</a>'?> </li>
+                  <li> <?php echo '<a href="comment.php?userid=' . urlencode($userid) . '">Comment</a>'?> </li>
                   <li> <?php echo '<a href="write.php?userid=' . urlencode($userid) . '">Write</a>'?> </li>
                   <li> <?php echo '<a href="start2.php?userid=' . urlencode($userid) . '">Home</a>'?> </li>
                   <li><?php echo '<a href="logout.php">Log Out</a>'; ?></li>
@@ -54,6 +55,9 @@ $showReviews = isset($_GET['reviews']) ? $_GET['reviews'] : 'all'; //to switch b
                     echo "Review: " . htmlspecialchars($row['review_text']);
                     echo '</div>';
                 }
+
+                echo "Review ID: " . $row['id'] . " &nbsp;&nbsp;&nbsp; User: " . htmlspecialchars($row['username']) . " &nbsp;&nbsp;&nbsp; Location: " . htmlspecialchars($row['location']) . " &nbsp;&nbsp;&nbsp; Meal: " . htmlspecialchars($row['meal']) . " &nbsp;&nbsp;&nbsp; Date Created: " . htmlspecialchars($row['created_at']) . " &nbsp;&nbsp;&nbsp; Rating: " . $row['rating'] . " &nbsp;&nbsp;&nbsp; Review: " . htmlspecialchars($row['review_text']) . " &nbsp;&nbsp;&nbsp; Comments: " . htmlspecialchars($row['comment_text']);
+
                 echo '</div>';
             }
             $stmt->close();
@@ -64,6 +68,7 @@ $showReviews = isset($_GET['reviews']) ? $_GET['reviews'] : 'all'; //to switch b
               $num = mysqli_num_rows($result);
               while ($row = mysqli_fetch_assoc($result)) {
                 echo '<div class="review">';
+
                 echo '<div class="review-info">';
                 echo "Review ID: " . $row['id'] . " | User: " . htmlspecialchars($row['username']) . " | Location: " . htmlspecialchars($row['location']) . " | Meal: " . htmlspecialchars($row['meal']) . " | Date: " . htmlspecialchars($row['created_at']);
                 echo '</div>';
@@ -81,6 +86,8 @@ $showReviews = isset($_GET['reviews']) ? $_GET['reviews'] : 'all'; //to switch b
                     echo "Review: " . htmlspecialchars($row['review_text']);
                     echo '</div>';
                 }
+
+                echo "Review ID: " . $row['id'] . " &nbsp;&nbsp;&nbsp; User: " . htmlspecialchars($row['username']) . " &nbsp;&nbsp;&nbsp; Location: " . htmlspecialchars($row['location']) . " &nbsp;&nbsp;&nbsp; Meal: " . htmlspecialchars($row['meal']) . " &nbsp;&nbsp;&nbsp; Date Created: " . htmlspecialchars($row['created_at']) . " &nbsp;&nbsp;&nbsp; Rating: " . $row['rating'] . " &nbsp;&nbsp;&nbsp; Review: " . htmlspecialchars($row['review_text']) . " &nbsp;&nbsp;&nbsp; Comments: " . htmlspecialchars($row['comment_text']);
                 echo '</div>';
             }
         }
