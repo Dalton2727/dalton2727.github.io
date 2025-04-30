@@ -26,6 +26,7 @@ while ($row = mysqli_fetch_assoc($result)) {
         <meta name="Swings points balance" content="" />
         <meta name="description" content="Wesleyan University Point budgeter"/>
         <link rel="stylesheet" href="CSScode.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     </head>
 <body id = "demo_font" style="background-color: #f4f4f4;">
             <div id="navbar" class="light">
@@ -33,6 +34,7 @@ while ($row = mysqli_fetch_assoc($result)) {
                   <li>User: <?php echo $userid?></li>
                   <li> <?php echo '<a href="reviews.php?userid=' . urlencode($userid) . '">Reviews</a>'?> </li>
                   <li> <?php echo '<a href="Edit.php?userid=' . urlencode($userid) . '">Edit</a>'?> </li>
+                  <li> <?php echo '<a href="comment.php?userid=' . urlencode($userid) . '">Comment</a>'?> </li>
                   <li> <?php echo '<a href="write.php?userid=' . urlencode($userid) . '">Write</a>'?> </li>
                   <li> <?php echo '<a href="demo.php?userid=' . urlencode($userid) . '">Start</a>'?> </li>
                   <li> <?php echo '<a href="start2.php?userid=' . urlencode($userid) . '">Home</a>'?> </li>
@@ -69,8 +71,37 @@ while ($row = mysqli_fetch_assoc($result)) {
                     </p>
 
                     <p style="margin: 20px 0;">
+
+                  
+                    <div class="star-rating">
                     <label> Rating (leave blank for no change): </label>
-                    <input type="number" name="rating" min="1" max="10" />
+                        <span class="star" onclick="setRating(1)">☆</span>
+                        <span class="star" onclick="setRating(2)">☆</span>
+                        <span class="star" onclick="setRating(3)">☆</span>
+                        <span class="star" onclick="setRating(4)">☆</span>
+                        <span class="star" onclick="setRating(5)">☆</span>
+                        <span class="star" onclick="setRating(6)">☆</span>
+                        <span class="star" onclick="setRating(7)">☆</span>
+                        <span class="star" onclick="setRating(8)">☆</span>
+                        <span class="star" onclick="setRating(9)">☆</span>
+                        <span class="star" onclick="setRating(10)">☆</span>
+                        <input type="hidden" name="rating" id="ratingInput" value="">
+                    </div>
+                    <script>
+                    function setRating(rating) {
+                        document.getElementById('ratingInput').value = rating;
+                        const stars = document.querySelectorAll('.star');
+                        stars.forEach((star, index) => {
+                            if (index < rating) {
+                                star.textContent = '★';
+                                star.style.color = '#FFD700';
+                            } else {
+                                star.textContent = '☆';
+                                star.style.color = '#ddd';
+                            }
+                        });
+                    }
+                    </script>
                     </p>
 
                     <p style="margin: 20px 0;">
