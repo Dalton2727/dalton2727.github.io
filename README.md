@@ -148,12 +148,3 @@ DROP COLUMN month;
 ALTER TABLE users
 ADD COLUMN budget DECIMAL(10, 2);
 
-ALTER TABLE Menu
-MODIFY COLUMN average_rating DECIMAL(4,2);
-
-UPDATE Menu
-SET average_rating = (
-    SELECT AVG(r.rating)
-    FROM reviews r
-    WHERE r.meal = Menu.item
-);
