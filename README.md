@@ -44,6 +44,7 @@ The Rest API of our app functions through the Controller/Api, inc, and Model fol
 Running the unit tests:
 First make sure that homebrew, phpUnit, composer, and php are installed
 Inside the htdocs folder, create a folder called "test-project" and run "composer init" in this folder following the testing setup (skipping most lines, for define dev dependencies, write phpunit/phpunit). Then, inside the test-project folder, make a folder called "tests". Place the 4 testing php files (testGet_UserList.php, testPost_CreateUser.php, testPost_FailedLogin.php, testPost_LoginUser.php) inside the tests folder. You can run the tests with php vendor/bin/phpunit tests/"name of test php file"
+No repo changes were made from HW3
 
 
 
