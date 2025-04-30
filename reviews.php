@@ -56,7 +56,7 @@ $showReviews = isset($_GET['reviews']) ? $_GET['reviews'] : 'all'; //to switch b
                     echo '</div>';
                 }
 
-                echo "Review ID: " . $row['id'] . " &nbsp;&nbsp;&nbsp; User: " . htmlspecialchars($row['username']) . " &nbsp;&nbsp;&nbsp; Location: " . htmlspecialchars($row['location']) . " &nbsp;&nbsp;&nbsp; Meal: " . htmlspecialchars($row['meal']) . " &nbsp;&nbsp;&nbsp; Date Created: " . htmlspecialchars($row['created_at']) . " &nbsp;&nbsp;&nbsp; Rating: " . $row['rating'] . " &nbsp;&nbsp;&nbsp; Review: " . htmlspecialchars($row['review_text']) . " &nbsp;&nbsp;&nbsp; Comments: " . htmlspecialchars($row['comment_text']);
+                echo "Comments: " . htmlspecialchars($row['comment_text']);
 
                 echo ' <form action="Edit.php" method="get" style="display:inline;">
                 <input type="hidden" name="userid" value="' . htmlspecialchars($userid) . '" />
@@ -97,7 +97,8 @@ $showReviews = isset($_GET['reviews']) ? $_GET['reviews'] : 'all'; //to switch b
                     echo '</div>';
                 }
 
-                echo "Review ID: " . $row['id'] . " &nbsp;&nbsp;&nbsp; User: " . htmlspecialchars($row['username']) . " &nbsp;&nbsp;&nbsp; Location: " . htmlspecialchars($row['location']) . " &nbsp;&nbsp;&nbsp; Meal: " . htmlspecialchars($row['meal']) . " &nbsp;&nbsp;&nbsp; Date Created: " . htmlspecialchars($row['created_at']) . " &nbsp;&nbsp;&nbsp; Rating: " . $row['rating'] . " &nbsp;&nbsp;&nbsp; Review: " . htmlspecialchars($row['review_text']) . " &nbsp;&nbsp;&nbsp; Comments: " . htmlspecialchars($row['comment_text']);
+                echo "Comments: " . htmlspecialchars($row['comment_text']);
+
                 echo ' <form action="comment.php" method="get" style="display:inline;">
                 <input type="hidden" name="userid" value="' . htmlspecialchars($userid) . '" />
                 <input type="hidden" name="revid" value="' . $row['id'] . '" />
