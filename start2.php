@@ -36,7 +36,7 @@ $userid = isset($_GET['userid']) ? $_GET['userid'] : '';
                         <p>Keeping track of your points can be stressful and laborious.
                         With our site, budgeting is merely a swipe away!
                         </p>
-                        <a href="<?php if ($_SESSION["loggedin"] == true) {echo 'reviews.php?userid=' . urlencode($userid) ;} else {echo 'index.php' ;}?>" class="button">Start</a>
+                        <a href="<?php if ($_SESSION["loggedin"] == true) {echo 'demo.php?userid=' . urlencode($userid) ;} else {echo 'index.php' ;}?>" class="button">Start</a>
                     </div>
             </div>
             <div>
