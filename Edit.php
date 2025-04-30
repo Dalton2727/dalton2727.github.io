@@ -70,6 +70,7 @@ while ($row = mysqli_fetch_assoc($result)) {
                     </p>
 
                     <p style="margin: 20px 0;">
+
                   
                     <div class="star-rating">
                     <label> Rating (leave blank for no change): </label>
