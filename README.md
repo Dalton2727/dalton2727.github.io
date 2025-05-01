@@ -52,7 +52,14 @@ Using Gen AI tools can make testing easy, especially given existing code example
 
 SQL code:
 
-CREATE TABLE users (username VARCHAR(255) PRIMARY KEY, password TEXT);
+CREATE TABLE users 
+    (username VARCHAR(255) PRIMARY KEY,
+    password TEXT,
+    created_at DATETIME,
+    budget DECIMAL(10, 2),
+    spent DECIMAL(10, 2),
+    remainder DECIMAL(10, 2));
+);
 
 CREATE TABLE reviews
     (id INTEGER PRIMARY KEY AUTO_INCREMENT,
@@ -62,8 +69,7 @@ CREATE TABLE reviews
     rating INTEGER,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     review_text TEXT,
-    comment_text TEXT
-    );
+    comment_text TEXT);
 );
 
 CREATE TABLE Menu (
@@ -143,11 +149,7 @@ CREATE TABLE purchases (
     (id INT AUTO_INCREMENT PRIMARY KEY,
     user_id VARCHAR(255),
     item_name VARCHAR(255) NOT NULL,
-    item_price DECIMAL(10, 2) NOT NULL,
-    created_at DATETIME,
-    budget DECIMAL(10, 2),
-    spent DECIMAL(10, 2),
-    remainder DECIMAL(10, 2));
+    item_price DECIMAL(10, 2) NOT NULL);
 );
 
 
