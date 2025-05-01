@@ -59,13 +59,18 @@ CREATE TABLE reviews
     username TEXT,
     location TEXT,
     meal TEXT,
-    rating INTEGER);
+    rating INTEGER,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    review_text TEXT,
+    comment_text TEXT
+    );
+);
 
 CREATE TABLE Menu (
     location VARCHAR(50),
     category VARCHAR(50),
     item VARCHAR(255),
-    price DECIMAL(5,2)
+    price DECIMAL(5,2);
 );
 
 INSERT INTO Menu (location, category, item, price) VALUES
@@ -135,14 +140,14 @@ INSERT INTO Menu (location, category, item, price) VALUES
 ('RBC', 'Specialty sandwiches', 'THANKSGIVING TURKEY', 11.99),
 
 CREATE TABLE purchases (
-    id INT AUTO_INCREMENT PRIMARY KEY,
+    (id INT AUTO_INCREMENT PRIMARY KEY,
     user_id VARCHAR(255),
     item_name VARCHAR(255) NOT NULL,
     item_price DECIMAL(10, 2) NOT NULL,
     created_at DATETIME,
     budget DECIMAL(10, 2),
     spent DECIMAL(10, 2),
-    remainder DECIMAL(10, 2),
+    remainder DECIMAL(10, 2));
 );
 
 
@@ -154,9 +159,6 @@ ADD COLUMN review_text TEXT;
 
 ALTER TABLE reviews
 ADD COLUMN comment_text TEXT;
-
-ALTER TABLE purchases
-DROP COLUMN month;
 
 ALTER TABLE users
 ADD COLUMN budget DECIMAL(10, 2);
