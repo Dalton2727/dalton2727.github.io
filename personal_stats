@@ -9,10 +9,41 @@ if (empty($userid)) {
     die("Error: User not logged in");
 }
 
+// Get selected month from GET parameter or use current month
+$selected_month = isset($_GET['month']) ? $_GET['month'] : date('Y-m');
+$selected_month_start = $selected_month . '-01';
+$selected_month_end = date('Y-m-t', strtotime($selected_month_start));
+
+// Get list of available months from purchases
+$months_sql = "SELECT DISTINCT DATE_FORMAT(created_at, '%Y-%m') as month 
+               FROM purchases 
+               WHERE user_id = ? 
+               ORDER BY month DESC";
+$months_stmt = mysqli_prepare($db, $months_sql);
+if (!$months_stmt) {
+    die("Error preparing statement: " . mysqli_error($db));
+}
+
+if (!mysqli_stmt_bind_param($months_stmt, "s", $userid)) {
+    die("Error binding parameters: " . mysqli_stmt_error($months_stmt));
+}
+
+if (!mysqli_stmt_execute($months_stmt)) {
+    die("Error executing statement: " . mysqli_stmt_error($months_stmt));
+}
+
+$months_result = mysqli_stmt_get_result($months_stmt);
+$available_months = [];
+while ($row = mysqli_fetch_assoc($months_result)) {
+    $available_months[] = $row['month'];
+}
+
 // Get spending data by location
 $sql = "SELECT location, SUM(item_price) as total_spent 
         FROM purchases 
         WHERE user_id = ? 
+        AND created_at >= ? 
+        AND created_at <= ?
         GROUP BY location 
         ORDER BY total_spent DESC";
 $stmt = mysqli_prepare($db, $sql);
@@ -20,7 +51,7 @@ if (!$stmt) {
     die("Error preparing statement: " . mysqli_error($db));
 }
 
-if (!mysqli_stmt_bind_param($stmt, "s", $userid)) {
+if (!mysqli_stmt_bind_param($stmt, "sss", $userid, $selected_month_start, $selected_month_end)) {
     die("Error binding parameters: " . mysqli_stmt_error($stmt));
 }
 
@@ -52,7 +83,9 @@ $js_location_string = implode(",\n", $js_location_data);
 // Get data for line graph (cumulative)
 $sql_time_cumulative = "SELECT DATE(created_at) as date, SUM(item_price) as spent_day
         FROM purchases 
-        WHERE user_id = ?
+        WHERE user_id = ? 
+        AND created_at >= ? 
+        AND created_at <= ?
         GROUP BY DATE(created_at)
         ORDER BY DATE(created_at) ASC";     
 $stmt_time_cumulative = mysqli_prepare($db, $sql_time_cumulative);
@@ -60,7 +93,7 @@ if (!$stmt_time_cumulative) {
     die("Error preparing statement: " . mysqli_error($db));
 }
 
-if (!mysqli_stmt_bind_param($stmt_time_cumulative, "s", $userid)) {
+if (!mysqli_stmt_bind_param($stmt_time_cumulative, "sss", $userid, $selected_month_start, $selected_month_end)) {
     die("Error binding parameters: " . mysqli_stmt_error($stmt_time_cumulative));
 }
 
@@ -87,6 +120,8 @@ while ($row = mysqli_fetch_assoc($result_time_cumulative)) {
 $sql_time_daily = "SELECT DATE(created_at) as date, SUM(item_price) as spent_day
         FROM purchases 
         WHERE user_id = ?
+        AND created_at >= ? 
+        AND created_at <= ?
         GROUP BY DATE(created_at)
         ORDER BY DATE(created_at) ASC";     
 $stmt_time_daily = mysqli_prepare($db, $sql_time_daily);
@@ -94,7 +129,7 @@ if (!$stmt_time_daily) {
     die("Error preparing statement: " . mysqli_error($db));
 }
 
-if (!mysqli_stmt_bind_param($stmt_time_daily, "s", $userid)) {
+if (!mysqli_stmt_bind_param($stmt_time_daily, "sss", $userid, $selected_month_start, $selected_month_end)) {
     die("Error binding parameters: " . mysqli_stmt_error($stmt_time_daily));
 }
 
@@ -151,6 +186,18 @@ $js_budget_string = implode(",\n", $budget_data);
 <!DOCTYPE html>
 <html style="background-color: #f0f0f0;">
   <head>
+    <style>
+      .month-selector {
+        text-align: center;
+        margin: 20px;
+      }
+      .month-selector select {
+        padding: 8px;
+        font-size: 16px;
+        border-radius: 4px;
+        border: 1px solid #ccc;
+      }
+    </style>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript">
       google.charts.load("current", {packages:["corechart"]});
@@ -181,6 +228,19 @@ $js_budget_string = implode(",\n", $budget_data);
     </script>
     </head>
   <body>
+    <div class="month-selector">
+      <form method="get">
+        <select name="month" onchange="this.form.submit()">
+          <?php
+          foreach ($available_months as $month) {
+              $selected = ($month == $selected_month) ? 'selected' : '';
+              $month_display = date('F Y', strtotime($month));
+              echo "<option value='$month' $selected>$month_display</option>";
+          }
+          ?>
+        </select>
+      </form>
+    </div>
     <div style="text-align: center;">
       <div id="donutchart" style="width: 900px; height: 500px; margin: 0 auto;"></div>
       <div id="curve_chart" style="width: 900px; height: 500px; margin: 0 auto;"></div>
