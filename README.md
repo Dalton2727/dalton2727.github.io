@@ -14,9 +14,6 @@ The work for this project was split 50/50
 
 <img width="1470" alt="Screenshot 2025-03-07 at 11 37 08 PM" src="https://github.com/user-attachments/assets/5879ae59-fd49-43c4-8505-22db066df650" />
 
-We hard-coded our IP address in lines: 55, 89, 146, 210, 447, 552, 648, 654 of the App.js file
-(all hard coding now has the adress 10.0.2.2 for android emulator)
-
 We used AI for general debugging and help with formatting/styling as well as the CORS functionality
 
 Link to the website through: https://wesspend.free.nf/
@@ -28,6 +25,7 @@ From the login page, you can create a username and password to log in and will t
 
 (The start page leads to a demo of our budgeting app)
 
+The mobile version does not have the latest updates made for the project
 For the Mobile react version, run the code with an emulator, we used expo go, running the code npx expo start and navigating through the app on a real mobile device using the navbar at the bottom of the app. The mobile version also uses the localhost through XAAMP to call on our SQL database and tables.
 
 Make sure that you run all of these commands in your terminal to get the app working with Expo:
@@ -37,11 +35,15 @@ cd budget
 npm install @react-navigation/native @react-navigation/bottom-tabs react-native-webview @expo/vector-iconsnpx expo install react-native-screens react-native-safe-area-context
 npx expo install react-native-screens react-native-safe-area-context
 
+We hard-coded our IP address in lines: 55, 89, 146, 210, 447, 552, 648, 654 of the App.js file
+(all hard coding now has the adress 10.0.2.2 for android emulator)
+
 Rest API:
 
 The Rest API of our app functions through the Controller/Api, inc, and Model folders as well as the index2.php. The UpdateModel.php file in the Model folder updates the tables we call from our database through the CRUD and login/sign in functionalities. In the Model folder, the Database.php handles all connections with the Database and creates methods for executing SQL queries. In the Controller/Api folder, the BaseController.php deals with error, request, and response handling as well as session management. The UserController.php extends BaseController.php to implement specific endpoints and uses UserModel.php to interact with the database. Within the inc folder, config.php contains the configuration settings for the database and bootstrap.php is for the intialization and setup. Then through the index2.php, the main entry point, we process endpoint calls (i.e. /index2.php/user/list) and then matches them up with certain functions/commands on how the computer should handle these calls accordingly. We have several endpoints such as /user/login and /user/addreview that the App.js uses to call on the REST API.
 
 Running the unit tests:
+
 First make sure that homebrew, phpUnit, composer, and php are installed
 Inside the htdocs folder, create a folder called "test-project" and run "composer init" in this folder following the testing setup (skipping most lines, for define dev dependencies, write phpunit/phpunit). Then, inside the test-project folder, make a folder called "tests". Place the 4 testing php files (testGet_UserList.php, testPost_CreateUser.php, testPost_FailedLogin.php, testPost_LoginUser.php) inside the tests folder. You can run the tests with php vendor/bin/phpunit tests/"name of test php file"
 No repo changes were made from HW3
