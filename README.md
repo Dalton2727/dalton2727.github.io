@@ -162,7 +162,8 @@ CREATE TABLE purchases (
     user_id VARCHAR(255),
     created_at DATETIME,
     item_name VARCHAR(255) NOT NULL,
-    item_price DECIMAL(10, 2) NOT NULL
+    item_price DECIMAL(10, 2) NOT NULL,
+    location VARCHAR(255)
 );
 
 
