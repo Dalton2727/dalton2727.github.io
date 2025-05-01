@@ -124,7 +124,15 @@ INSERT INTO Menu (location, category, item, price) VALUES
 ('RBC', 'Breakfast', 'EGG & CHEESE SANDWICH', 4.99),
 ('RBC', 'Breakfast', 'VEGGIE BREAKFAST WRAP', 6.99),
 ('RBC', 'Breakfast', 'CARDINAL BREAKFAST', 11.99),
-('RBC', 'Breakfast', 'TOASTED BAGEL WITH CREAM CHEESE', 2.99);
+('RBC', 'Build your own', 'BYO SALAD', 26.99);
+('RBC', 'Build your own', 'BYO SANDWICH', 10.99),
+('RBC', 'Build your own', 'BYO GRILLED CHEESE', 5.99),
+('RBC', 'Build your own', 'BYO SMALL SMOOTHIE', 6.50),
+('RBC', 'Build your own', 'BYO LARGE SMOOTHIE', 7.99),
+('RBC', 'Specialty sandwiches', 'TURKEY PANINO', 11.99),
+('RBC', 'Specialty sandwiches', 'TOMATO PANINO', 10.99),
+('RBC', 'Specialty sandwiches', 'ITALIAN PANINO', 11.99),
+('RBC', 'Specialty sandwiches', 'THANKSGIVING TURKEY', 11.99),
 
 CREATE TABLE purchases (
     id INT AUTO_INCREMENT PRIMARY KEY,
