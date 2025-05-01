@@ -130,6 +130,12 @@ $percentageSpent = min($percentageSpent, 100);
             <input type="hidden" name="item_name" id="item_name">
             <input type="hidden" name="item_price" id="item_price">
 
+            <label for="purchase_date">Purchase Date: </label>
+            <input type="date" id="purchase_date" name="purchase_date" required>
+            
+            <label for="purchase_time">Purchase Time (optional): </label>
+            <input type="time" id="purchase_time" name="purchase_time">
+
             <input type="submit" value="Update">
         </form>
     </div>
@@ -226,6 +232,8 @@ $percentageSpent = min($percentageSpent, 100);
             const selectedOption = menuItem.options[menuItem.selectedIndex];
             const newBudget = document.getElementById('budget').value;
             const newSpent = document.getElementById('spent').value;
+            const purchaseDate = document.getElementById('purchase_date').value;
+            const purchaseTime = document.getElementById('purchase_time').value;
             
             // Create FormData object
             const formData = new FormData(this);
@@ -275,6 +283,11 @@ $percentageSpent = min($percentageSpent, 100);
                 alert('Please select an item to purchase');
                 return;
             }
+
+            if (!purchaseDate) {
+                alert('Please select a purchase date');
+                return;
+            }
             
             // Set the hidden fields
             const itemName = selectedOption.value;
@@ -283,9 +296,16 @@ $percentageSpent = min($percentageSpent, 100);
             document.getElementById('item_name').value = itemName;
             document.getElementById('item_price').value = itemPrice;
             
+            // Combine date and time if time is provided
+            let purchaseDateTime = purchaseDate;
+            if (purchaseTime) {
+                purchaseDateTime += ' ' + purchaseTime;
+            }
+            
             console.log('Submitting purchase:', {
                 item_name: itemName,
-                item_price: itemPrice
+                item_price: itemPrice,
+                purchase_date: purchaseDateTime
             });
 
             // Send AJAX request for purchase
