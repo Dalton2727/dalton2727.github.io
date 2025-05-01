@@ -140,7 +140,9 @@ CREATE TABLE purchases (
     item_name VARCHAR(255) NOT NULL,
     item_price DECIMAL(10, 2) NOT NULL,
     created_at DATETIME,
-    budget DECIMAL(10, 2)
+    budget DECIMAL(10, 2),
+    spent DECIMAL(10, 2),
+    remainder DECIMAL(10, 2),
 );
 
 
