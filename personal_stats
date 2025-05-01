@@ -18,6 +18,7 @@ $selected_month_end = date('Y-m-t', strtotime($selected_month_start));
 $months_sql = "SELECT DISTINCT DATE_FORMAT(created_at, '%Y-%m') as month 
                FROM purchases 
                WHERE user_id = ? 
+               AND created_at IS NOT NULL 
                ORDER BY month DESC";
 $months_stmt = mysqli_prepare($db, $months_sql);
 if (!$months_stmt) {
