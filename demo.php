@@ -44,27 +44,45 @@ if (!isset($_SESSION['remaining'])) {
     $_SESSION['remaining'] = $_SESSION['budget'] - $_SESSION['spent'];
 }
 
-// Get menu items from database
-$query = "SELECT item, price FROM Menu";
-$stmt = mysqli_prepare($db, $query);
-if (!$stmt) {
+// Get locations from database
+$location_query = "SELECT DISTINCT location FROM Menu ORDER BY location";
+$location_stmt = mysqli_prepare($db, $location_query);
+if (!$location_stmt) {
+    error_log("Error preparing location query: " . mysqli_error($db));
+    die("Error preparing location query: " . mysqli_error($db));
+}
+
+if (!mysqli_stmt_execute($location_stmt)) {
+    error_log("Error executing location query: " . mysqli_stmt_error($location_stmt));
+    die("Error executing location query: " . mysqli_stmt_error($location_stmt));
+}
+
+$location_result = mysqli_stmt_get_result($location_stmt);
+$locations = mysqli_fetch_all($location_result, MYSQLI_ASSOC);
+mysqli_stmt_close($location_stmt);
+
+// Get all menu items with their locations
+$menu_query = "SELECT item, price, location FROM Menu ORDER BY location, item";
+$menu_stmt = mysqli_prepare($db, $menu_query);
+if (!$menu_stmt) {
     error_log("Error preparing menu query: " . mysqli_error($db));
     die("Error preparing menu query: " . mysqli_error($db));
 }
 
-if (!mysqli_stmt_execute($stmt)) {
-    error_log("Error executing menu query: " . mysqli_stmt_error($stmt));
-    die("Error executing menu query: " . mysqli_stmt_error($stmt));
+if (!mysqli_stmt_execute($menu_stmt)) {
+    error_log("Error executing menu query: " . mysqli_stmt_error($menu_stmt));
+    die("Error executing menu query: " . mysqli_stmt_error($menu_stmt));
 }
 
-$result = mysqli_stmt_get_result($stmt);
-if (!$result) {
-    error_log("Error getting result: " . mysqli_error($db));
-    die("Error getting result: " . mysqli_error($db));
-}
+$menu_result = mysqli_stmt_get_result($menu_stmt);
+$menu_items = mysqli_fetch_all($menu_result, MYSQLI_ASSOC);
+mysqli_stmt_close($menu_stmt);
 
-$menu_items = mysqli_fetch_all($result, MYSQLI_ASSOC);
-mysqli_stmt_close($stmt);
+// Convert menu items to a format that's easier to work with in JavaScript
+$menu_items_by_location = [];
+foreach ($menu_items as $item) {
+    $menu_items_by_location[$item['location']][] = $item;
+}
 
 $budget = $_SESSION['budget'];
 $spent = $_SESSION['spent'];
@@ -118,14 +136,19 @@ $percentageSpent = min($percentageSpent, 100);
             <label for="spent">Amount spent: </label>
             <input type="number" id="spent" name="spent" value="<?php echo number_format($spent, 2); ?>" min="0.00" step="0.01">
 
-            <label for="menu_item">Purchase an item: </label>
-            <select id="menu_item" name="menu_item">
-                <option value="" disabled selected>Select an item</option> 
-                <?php foreach ($menu_items as $item): ?>
-                    <option value="<?php echo htmlspecialchars($item['item']); ?>" data-price="<?php echo $item['price']; ?>">
-                        <?php echo htmlspecialchars($item['item']) . " - $" . number_format($item['price'], 2); ?>
+            <label for="location">Select Location: </label>
+            <select id="location" name="location" required>
+                <option value="" disabled selected>Select a location</option>
+                <?php foreach ($locations as $location): ?>
+                    <option value="<?php echo htmlspecialchars($location['location']); ?>">
+                        <?php echo htmlspecialchars($location['location']); ?>
                     </option>
                 <?php endforeach; ?>
+            </select>
+
+            <label for="menu_item">Purchase an item: </label>
+            <select id="menu_item" name="menu_item" disabled>
+                <option value="" disabled selected>Select an item</option>
             </select>
             <input type="hidden" name="item_name" id="item_name">
             <input type="hidden" name="item_price" id="item_price">
@@ -141,6 +164,39 @@ $percentageSpent = min($percentageSpent, 100);
     </div>
 
     <script>
+        // Store menu items data
+        const menuItemsByLocation = <?php echo json_encode($menu_items_by_location); ?>;
+        
+        // Function to update menu items based on selected location
+        function updateMenuItems() {
+            const locationSelect = document.getElementById('location');
+            const menuItemSelect = document.getElementById('menu_item');
+            const selectedLocation = locationSelect.value;
+            
+            // Clear existing options
+            menuItemSelect.innerHTML = '<option value="" disabled selected>Select an item</option>';
+            
+            if (selectedLocation && menuItemsByLocation[selectedLocation]) {
+                // Enable the menu item select
+                menuItemSelect.disabled = false;
+                
+                // Add items for the selected location
+                menuItemsByLocation[selectedLocation].forEach(item => {
+                    const option = document.createElement('option');
+                    option.value = item.item;
+                    option.textContent = `${item.item} - $${parseFloat(item.price).toFixed(2)}`;
+                    option.dataset.price = item.price;
+                    menuItemSelect.appendChild(option);
+                });
+            } else {
+                // Disable the menu item select if no location is selected
+                menuItemSelect.disabled = true;
+            }
+        }
+
+        // Add event listener for location change
+        document.getElementById('location').addEventListener('change', updateMenuItems);
+
         // Function to update the page with new values
         function updatePageValues(data) {
             try {
