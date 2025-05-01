@@ -1,13 +1,29 @@
 <?php
+// Enable error reporting
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 session_start();
+
+// Debug session
+error_log("Update_budget.php - Session status: " . session_status());
+error_log("Update_budget.php - Session ID: " . session_id());
+error_log("Update_budget.php - Session data: " . print_r($_SESSION, true));
+error_log("Update_budget.php - POST data: " . print_r($_POST, true));
+error_log("Update_budget.php - Raw input: " . file_get_contents('php://input'));
+
 include 'dbconnection.php';
 
-// Debug session and POST data
-error_log("Update_budget.php - Session userid: " . (isset($_SESSION['userid']) ? $_SESSION['userid'] : 'not set'));
-error_log("Update_budget.php - POST data: " . print_r($_POST, true));
+// Check if database connection is successful
+if (!$db) {
+    error_log("Update_budget.php - Database connection failed: " . mysqli_connect_error());
+    echo json_encode(['error' => 'Database connection failed']);
+    exit();
+}
 
 // Check if user is logged in
 if (!isset($_SESSION['userid'])) {
+    error_log("Update_budget.php - User not logged in");
     echo json_encode(['error' => 'You must be logged in to update budget.']);
     exit();
 }
@@ -16,7 +32,9 @@ $user_id = $_SESSION['userid'];
 $new_budget = isset($_POST['budget']) ? floatval($_POST['budget']) : null;
 $new_spent = isset($_POST['spent']) ? floatval($_POST['spent']) : null;
 
-error_log("Update_budget.php - New values: budget=" . $new_budget . ", spent=" . $new_spent);
+error_log("Update_budget.php - User ID: " . $user_id);
+error_log("Update_budget.php - New budget: " . $new_budget);
+error_log("Update_budget.php - New spent: " . $new_spent);
 
 try {
     // Start transaction
