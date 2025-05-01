@@ -242,6 +242,16 @@ $js_budget_string = implode(",\n", $budget_data);
         </select>
       </form>
     </div>
+    <div style="text-align: center; margin: 20px 0;">
+        <form action="personal_stats.php" method="get" style="display: inline;">
+            <input type="hidden" name="userid" value="<?php echo htmlspecialchars($userid); ?>" />
+            <button type="submit">My Stats</button>
+        </form>
+        <form action="Ratings.php" method="get" style="display: inline;">
+            <input type="hidden" name="userid" value="<?php echo htmlspecialchars($userid); ?>" />
+            <button type="submit">Public Stats</button>
+        </form>
+    </div>
     <div style="text-align: center;">
       <div id="donutchart" style="width: 900px; height: 500px; margin: 0 auto;"></div>
       <div id="curve_chart" style="width: 900px; height: 500px; margin: 0 auto;"></div>
@@ -359,5 +369,5 @@ $js_budget_string = implode(",\n", $budget_data);
   </head>
   <body>
     <div id="chart_div" style="width: 900px; height: 500px;"></div>
-  </body>
+</body>
 </html>
