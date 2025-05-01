@@ -128,14 +128,18 @@ $percentageSpent = min($percentageSpent, 100);
             <p>Remaining: $<?php echo number_format($remaining, 2); ?></p>
         </div>
 
-        <form action="update_history.php" method="POST" class="demo-form">
+        <form id="budget-form" class="demo-form">
             <input type="hidden" name="user_id" value="<?php echo htmlspecialchars($_SESSION['userid']); ?>">
             <label for="budget">Set your monthly budget: </label>
             <input type="number" id="budget" name="budget" value="<?php echo number_format($budget, 2); ?>" min="0.00" step="0.01">
             
             <label for="spent">Amount spent: </label>
             <input type="number" id="spent" name="spent" value="<?php echo number_format($spent, 2); ?>" min="0.00" step="0.01">
+            <input type="submit" id = "update-budget" value="Update Budget">
+        </form>
 
+        <form action="update_history.php" method="POST" class="demo-form">
+            <input type="hidden" name="user_id" value="<?php echo htmlspecialchars($_SESSION['userid']); ?>">
             <label for="location">Select Location: </label>
             <select id="location" name="location" required>
                 <option value="" disabled selected>Select a location</option>
@@ -159,7 +163,7 @@ $percentageSpent = min($percentageSpent, 100);
             <label for="purchase_time">Purchase Time (optional): </label>
             <input type="time" id="purchase_time" name="purchase_time">
 
-            <input type="submit" value="Update">
+            <input type="submit" value="Make Purchase">
         </form>
     </div>
 
@@ -280,61 +284,49 @@ $percentageSpent = min($percentageSpent, 100);
             }
         });
 
-        // Handle form submission with AJAX
-        document.querySelector('form').addEventListener('submit', function(e) {
-            e.preventDefault(); // Prevent form submission
+        // Handle budget form submission
+        document.getElementById('update-budget').addEventListener('click', function() {
+            const formData = new FormData(document.getElementById('budget-form'));
+            
+            fetch('update_budget.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok: ' + response.status);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Budget update response:', data);
+                
+                if (data.error) {
+                    alert(data.error);
+                    return;
+                }
+                
+                if (data.success) {
+                    // Update the display with new values
+                    updatePageValues(data);
+                    // Show success message
+                    alert('Budget updated successfully!');
+                }
+            })
+            .catch(error => {
+                console.error('Error updating budget:', error);
+                alert('An error occurred while updating the budget. Please try again.');
+            });
+        });
+
+        // Handle purchase form submission
+        document.querySelector('form[action="update_history.php"]').addEventListener('submit', function(e) {
+            e.preventDefault();
             
             const menuItem = document.getElementById('menu_item');
             const selectedOption = menuItem.options[menuItem.selectedIndex];
-            const newBudget = document.getElementById('budget').value;
-            const newSpent = document.getElementById('spent').value;
             const purchaseDate = document.getElementById('purchase_date').value;
-            const purchaseTime = document.getElementById('purchase_time').value;
             
-            // Create FormData object
-            const formData = new FormData(this);
-            
-            // If no item is selected but budget or spent is changed, update those values
-            if (!selectedOption.value && (newBudget !== this.querySelector('[name="budget"]').defaultValue || 
-                                        newSpent !== this.querySelector('[name="spent"]').defaultValue)) {
-                console.log('Updating budget/spent values:', { newBudget, newSpent });
-                
-                // Send AJAX request to update budget
-                fetch('update_budget.php', {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok: ' + response.status);
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    console.log('Budget update response:', data);
-                    
-                    if (data.error) {
-                        alert(data.error);
-                        return;
-                    }
-                    
-                    if (data.success) {
-                        // Update the display with new values
-                        updatePageValues(data);
-                        // Reset form
-                        this.reset();
-                        // Show success message
-                        alert('Budget updated successfully!');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error updating budget:', error);
-                    alert('An error occurred while updating the budget. Please try again.');
-                });
-                return;
-            }
-            
-            // If an item is selected, proceed with purchase
             if (!selectedOption.value) {
                 alert('Please select an item to purchase');
                 return;
@@ -352,18 +344,9 @@ $percentageSpent = min($percentageSpent, 100);
             document.getElementById('item_name').value = itemName;
             document.getElementById('item_price').value = itemPrice;
             
-            // Combine date and time if time is provided
-            let purchaseDateTime = purchaseDate;
-            if (purchaseTime) {
-                purchaseDateTime += ' ' + purchaseTime;
-            }
+            // Create FormData object
+            const formData = new FormData(this);
             
-            console.log('Submitting purchase:', {
-                item_name: itemName,
-                item_price: itemPrice,
-                purchase_date: purchaseDateTime
-            });
-
             // Send AJAX request for purchase
             fetch('update_history.php', {
                 method: 'POST',

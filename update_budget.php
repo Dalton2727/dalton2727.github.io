@@ -50,13 +50,35 @@ try {
 
     // Update budget if provided
     if ($new_budget !== null) {
-        $budget_sql = "UPDATE users SET budget = ? WHERE username = ?";
+        $budget_sql = "UPDATE users SET budget = ?, spent = ?, remainder = ? WHERE username = ?";
         $budget_stmt = mysqli_prepare($db, $budget_sql);
         if (!$budget_stmt) {
             throw new Exception("Prepare failed for budget update: " . mysqli_error($db));
         }
         
-        if (!mysqli_stmt_bind_param($budget_stmt, "ds", $budget_difference, $user_id)) {
+        // Calculate new values
+        $current_spent_sql = "SELECT COALESCE(SUM(item_price), 0) as total_spent FROM purchases WHERE user_id = ?";
+        $current_spent_stmt = mysqli_prepare($db, $current_spent_sql);
+        if (!$current_spent_stmt) {
+            throw new Exception("Prepare failed for current spent: " . mysqli_error($db));
+        }
+        
+        if (!mysqli_stmt_bind_param($current_spent_stmt, "s", $user_id)) {
+            throw new Exception("Bind failed for current spent: " . mysqli_stmt_error($current_spent_stmt));
+        }
+        
+        if (!mysqli_stmt_execute($current_spent_stmt)) {
+            throw new Exception("Execute failed for current spent: " . mysqli_stmt_error($current_spent_stmt));
+        }
+        
+        $result = mysqli_stmt_get_result($current_spent_stmt);
+        $row = mysqli_fetch_assoc($result);
+        $current_spent = $row['total_spent'];
+        mysqli_stmt_close($current_spent_stmt);
+        
+        $remainder = $new_budget - $current_spent;
+        
+        if (!mysqli_stmt_bind_param($budget_stmt, "ddds", $new_budget, $current_spent, $remainder, $user_id)) {
             throw new Exception("Bind failed for budget update: " . mysqli_stmt_error($budget_stmt));
         }
         
@@ -79,7 +101,7 @@ try {
         
         // If there's a difference, add a manual adjustment purchase
         if ($difference != 0) {
-            $adjustment_sql = "INSERT INTO purchases (user_id, item_name, item_price) VALUES (?, 'Manual Adjustment', ?)";
+            $adjustment_sql = "INSERT INTO purchases (user_id, item_name, item_price, created_at) VALUES (?, 'Manual Adjustment', ?, NOW())";
             $adjustment_stmt = mysqli_prepare($db, $adjustment_sql);
             if (!$adjustment_stmt) {
                 throw new Exception("Prepare failed for adjustment: " . mysqli_error($db));
@@ -96,6 +118,23 @@ try {
             mysqli_stmt_close($adjustment_stmt);
             error_log("Update_budget.php - Added manual adjustment purchase");
         }
+        
+        // Update users table with new spent amount and remainder
+        $update_spent_sql = "UPDATE users SET spent = ?, remainder = budget - ? WHERE username = ?";
+        $update_spent_stmt = mysqli_prepare($db, $update_spent_sql);
+        if (!$update_spent_stmt) {
+            throw new Exception("Prepare failed for spent update: " . mysqli_error($db));
+        }
+        
+        if (!mysqli_stmt_bind_param($update_spent_stmt, "dds", $new_spent, $new_spent, $user_id)) {
+            throw new Exception("Bind failed for spent update: " . mysqli_stmt_error($update_spent_stmt));
+        }
+        
+        if (!mysqli_stmt_execute($update_spent_stmt)) {
+            throw new Exception("Execute failed for spent update: " . mysqli_stmt_error($update_spent_stmt));
+        }
+        
+        mysqli_stmt_close($update_spent_stmt);
         
         // Update session spent amount
         $_SESSION['spent'] = $new_spent;

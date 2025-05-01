@@ -67,16 +67,17 @@ try {
     error_log("Current remaining: " . $current_remaining);
     error_log("Purchase price: " . $price);
     
-    // Check if user has enough remaining balance for this purchase
-    if ($current_remaining < $price) {
-        mysqli_rollback($db);
-        echo json_encode(['success' => false, 'error' => 'Insufficient funds. You need $' . $price . ' but only have $' . $current_remaining . ' remaining.']);
-        exit;
-    }
-    
     // Get purchase date and time
     $purchase_date = $_POST['purchase_date'] ?? date('Y-m-d');
     $purchase_time = $_POST['purchase_time'] ?? '00:00:00';
+    $location = $_POST['location'] ?? '';
+    
+    if (empty($location)) {
+        error_log("Error: Location not provided");
+        mysqli_rollback($db);
+        echo json_encode(['success' => false, 'error' => 'Location is required']);
+        exit;
+    }
     
     // Format the datetime properly for MySQL
     $created_at = $purchase_date;
@@ -98,16 +99,16 @@ try {
         exit;
     }
 
-    error_log("Attempting to insert purchase with datetime: " . $created_at);
+    error_log("Attempting to insert purchase with datetime: " . $created_at . " and location: " . $location);
 
     // Insert the purchase into the database
-    $insert_sql = "INSERT INTO purchases (user_id, item_name, item_price, created_at) VALUES (?, ?, ?, ?)";
+    $insert_sql = "INSERT INTO purchases (user_id, item_name, item_price, created_at, location) VALUES (?, ?, ?, ?, ?)";
     $insert_stmt = mysqli_prepare($db, $insert_sql);
     if (!$insert_stmt) {
         throw new Exception("Prepare failed for insert: " . mysqli_error($db));
     }
     
-    if (!mysqli_stmt_bind_param($insert_stmt, "ssds", $user_id, $name, $price, $created_at)) {
+    if (!mysqli_stmt_bind_param($insert_stmt, "ssdss", $user_id, $name, $price, $created_at, $location)) {
         throw new Exception("Bind failed for insert: " . mysqli_stmt_error($insert_stmt));
     }
     
