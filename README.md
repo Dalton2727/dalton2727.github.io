@@ -52,31 +52,30 @@ Using Gen AI tools can make testing easy, especially given existing code example
 
 SQL code:
 
-CREATE TABLE users 
-    (username VARCHAR(255) PRIMARY KEY,
+CREATE TABLE users (
+    username VARCHAR(255) PRIMARY KEY,
     password TEXT,
-    created_at DATETIME,
     budget DECIMAL(10, 2),
     spent DECIMAL(10, 2),
-    remainder DECIMAL(10, 2));
+    remainder DECIMAL(10, 2)
 );
 
-CREATE TABLE reviews
-    (id INTEGER PRIMARY KEY AUTO_INCREMENT,
+CREATE TABLE reviews (
+    id INTEGER PRIMARY KEY AUTO_INCREMENT,
     username TEXT,
     location TEXT,
     meal TEXT,
     rating INTEGER,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     review_text TEXT,
-    comment_text TEXT);
+    comment_text TEXT
 );
 
 CREATE TABLE Menu (
     location VARCHAR(50),
     category VARCHAR(50),
     item VARCHAR(255),
-    price DECIMAL(5,2);
+    price DECIMAL(5,2)
 );
 
 INSERT INTO Menu (location, category, item, price) VALUES
@@ -135,7 +134,7 @@ INSERT INTO Menu (location, category, item, price) VALUES
 ('RBC', 'Breakfast', 'EGG & CHEESE SANDWICH', 4.99),
 ('RBC', 'Breakfast', 'VEGGIE BREAKFAST WRAP', 6.99),
 ('RBC', 'Breakfast', 'CARDINAL BREAKFAST', 11.99),
-('RBC', 'Build your own', 'BYO SALAD', 26.99);
+('RBC', 'Build your own', 'BYO SALAD', 26.99),
 ('RBC', 'Build your own', 'BYO SANDWICH', 10.99),
 ('RBC', 'Build your own', 'BYO GRILLED CHEESE', 5.99),
 ('RBC', 'Build your own', 'BYO SMALL SMOOTHIE', 6.50),
@@ -144,12 +143,22 @@ INSERT INTO Menu (location, category, item, price) VALUES
 ('RBC', 'Specialty sandwiches', 'TOMATO PANINO', 10.99),
 ('RBC', 'Specialty sandwiches', 'ITALIAN PANINO', 11.99),
 ('RBC', 'Specialty sandwiches', 'THANKSGIVING TURKEY', 11.99),
+('Pi Cafe', 'Coffee', 'Drip Coffee', 2.95),
+('Pi Cafe', 'Coffee', 'Iced Coffee', 3.45),
+('Pi Cafe', 'Coffee', 'Latte', 4.55),
+('Pi Cafe', 'Coffee', 'Espresso', 2.85),
+('Pi Cafe', 'Drinks', 'Chai', 5.00),
+('Pi Cafe', 'Drinks', 'Hot Chocolate', 4.15),
+('Pi Cafe', 'Drinks', 'Hot Tea', 2.80),
+('Pi Cafe', 'Drinks', 'Apple Cider', 2.75)
+;
 
 CREATE TABLE purchases (
-    (id INT AUTO_INCREMENT PRIMARY KEY,
+    id INT AUTO_INCREMENT PRIMARY KEY,
     user_id VARCHAR(255),
+    created_at DATETIME,
     item_name VARCHAR(255) NOT NULL,
-    item_price DECIMAL(10, 2) NOT NULL);
+    item_price DECIMAL(10, 2) NOT NULL
 );
 
 
