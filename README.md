@@ -46,9 +46,9 @@ Running the unit tests:
 
 First make sure that homebrew, phpUnit, composer, and php are installed
 Inside the htdocs folder, create a folder called "test-project" and run "composer init" in this folder following the testing setup (skipping most lines, for define dev dependencies, write phpunit/phpunit). Then, inside the test-project folder, make a folder called "tests". Place the 4 testing php files (testGet_UserList.php, testPost_CreateUser.php, testPost_FailedLogin.php, testPost_LoginUser.php) inside the tests folder. You can run the tests with php vendor/bin/phpunit tests/"name of test php file"
-No repo changes were made from HW3
+No repo changes were made from HW3.
 
-
+Using Gen AI tools can make testing easy, especially given existing code examples. To create the POST request testing files you can copy and paste the GET testing files and ask an AI tool (I used ChatGPT) to create a POST request testing file similar to the GET test for creating a user with username and password fields. The result from ChatGPT is usually very helpful, only needing to change some specific things like links to files, the file name, and deleting a userid field that ChatGPT always puts in conjunction with a username field that we do not use. Once the first POST request testing file is craeted, it is very easy to get the other ones, as it is just changing around the POST request contents and possibly changing the path the request takes.
 
 SQL code:
 
