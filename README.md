@@ -2,6 +2,10 @@ Created by Tara Pandey and Dalton Soper.
 
 This is a website created for an assignment for Comp 333, a Software Engineering course at Wesleyan University. 
 
+Our app is designed to be an online budgeting system, where students can track the meal points they have spent and how that fits into their monthly budget. 
+
+When you log into the app, you are taken to our budgeting demo. From there you can navigate around the app with the navbar. Certain pages in the navbar are only available if you are on a related page (such as the reviews, edit reviews, write reviews, comments and ratings page). We created a social component for the app with our ratings page which allows the user to see public data as well as their own. Our CRUD functionality is mostly through our reviews page, the user can write/edit/delete their own reviews and interact with reviews through comments. 
+
 The work for this project was split 50/50
 
 <img width="1085" alt="image" src="https://github.com/user-attachments/assets/192a395f-5754-4314-9a64-40ea8d5566d1" />
