@@ -140,8 +140,20 @@ while ($row = mysqli_fetch_assoc($result)) {
                     echo "<p>No top rated meals found.</p>";
                 }
                 ?>
+                
                 </div>
 
-
+<div style="text-align: center; margin-top: 20px;">
+    </div>
+    <div style="text-align: center; margin-top: 20px;">
+        <form action="personal_stats.php" method="get" style="display: inline;">
+            <input type="hidden" name="userid" value="<?php echo htmlspecialchars($userid); ?>" />
+            <button type="submit">My Stats</button>
+        </form>
+        <form action="Ratings.php" method="get" style="display: inline;">
+            <input type="hidden" name="userid" value="<?php echo htmlspecialchars($userid); ?>" />
+            <button type="submit"">Public Stats</button>
+        </form>
+    </div>
 </body>
 </html>
