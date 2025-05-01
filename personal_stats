@@ -187,18 +187,25 @@ $js_budget_string = implode(",\n", $budget_data);
 <!DOCTYPE html>
 <html style="background-color: #f0f0f0;">
   <head>
-    <style>
-      .month-selector {
-        text-align: center;
-        margin: 20px;
-      }
-      .month-selector select {
-        padding: 8px;
-        font-size: 16px;
-        border-radius: 4px;
-        border: 1px solid #ccc;
-      }
-    </style>
+    <body>
+    <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="Stats" content="" />
+        <meta name="description" content="Public Stats"/>
+        <link rel="stylesheet" href="CSScode.css" />
+     </head>
+  <div id="navbar" class="light">
+                <ul>
+                  <li>User: <?php echo $userid?></li>
+                  <li> <?php echo '<a href="reviews.php?userid=' . urlencode($userid) . '">Reviews</a>'?> </li>
+                  <li> <?php echo '<a href="ratings.php?userid=' . urlencode($userid) . '">Ratings</a>'?> </li>
+                  <li> <?php echo '<a href="Edit.php?userid=' . urlencode($userid) . '">Edit</a>'?> </li>
+                  <li> <?php echo '<a href="comment.php?userid=' . urlencode($userid) . '">Comment</a>'?> </li>
+                  <li> <?php echo '<a href="write.php?userid=' . urlencode($userid) . '">Write</a>'?> </li>
+                  <li> <?php echo '<a href="start2.php?userid=' . urlencode($userid) . '">Home</a>'?> </li>
+                  <li><?php echo '<a href="logout.php">Log Out</a>'; ?></li>
+                </ul>
+              </div>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript">
       google.charts.load("current", {packages:["corechart"]});
@@ -227,9 +234,7 @@ $js_budget_string = implode(",\n", $budget_data);
         chart.draw(data, options);
       }
     </script>
-    </head>
-  <body>
-    <div class="month-selector">
+    <div style="text-align: center; margin: 20px 0;">
       <form method="get">
         <select name="month" onchange="this.form.submit()">
           <?php
@@ -253,11 +258,11 @@ $js_budget_string = implode(",\n", $budget_data);
         </form>
     </div>
     <div style="text-align: center;">
+    <h1>Personal Stats</h1>
       <div id="donutchart" style="width: 900px; height: 500px; margin: 0 auto;"></div>
       <div id="curve_chart" style="width: 900px; height: 500px; margin: 0 auto;"></div>
       <div id="chart_div" style="width: 900px; height: 500px; margin: 0 auto;"></div>
     </div>
-  </body>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript">
       google.charts.load('current', {'packages':['corechart']});
@@ -305,10 +310,7 @@ $js_budget_string = implode(",\n", $budget_data);
         chart.draw(data, options);
       }
     </script>
-  </head>
-  <body>
     <div id="curve_chart" style="width: 900px; height: 500px"></div>
-  <head>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript">
       google.charts.load('current', {'packages':['corechart']});
@@ -366,8 +368,6 @@ $js_budget_string = implode(",\n", $budget_data);
         chart.draw(data, options);
       }
     </script>
-  </head>
-  <body>
     <div id="chart_div" style="width: 900px; height: 500px;"></div>
 </body>
 </html>
