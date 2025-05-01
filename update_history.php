@@ -3,7 +3,11 @@ session_start();
 
 include 'dbconnection.php';
 
-// Debug session
+// Enable error reporting
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+// Debug session and POST data
 error_log("Update_history.php - Session userid: " . (isset($_SESSION['userid']) ? $_SESSION['userid'] : 'not set'));
 error_log("Update_history.php - Session data: " . print_r($_SESSION, true));
 error_log("Update_history.php - POST data: " . print_r($_POST, true));
@@ -11,21 +15,24 @@ error_log("Update_history.php - POST data: " . print_r($_POST, true));
 // Get username from session
 $user_id = $_SESSION['userid'] ?? '';
 if (empty($user_id)) {
-    echo json_encode(['error' => 'You must be logged in to make a purchase.']);
+    error_log("Error: User not logged in");
+    echo json_encode(['success' => false, 'error' => 'You must be logged in to make a purchase.']);
     exit;
 }
 
 $name = isset($_POST['item_name']) ? $_POST['item_name'] : '';
-$price = isset($_POST['item_price']) ? $_POST['item_price'] : '';
-$budget = isset($_SESSION['budget']) ? $_SESSION['budget'] : 500.00;
+$price = isset($_POST['item_price']) ? floatval($_POST['item_price']) : 0;
+$budget = isset($_SESSION['budget']) ? floatval($_SESSION['budget']) : 500.00;
 
 // Debug: Print individual values
 error_log("Final values - user_id: " . $user_id);
 error_log("Final values - item_name: " . $name);
 error_log("Final values - item_price: " . $price);
+error_log("Final values - budget: " . $budget);
 
-if (empty($name) || empty($price)) {
-    echo json_encode(['error' => 'Item name and price are required.']);
+if (empty($name) || $price <= 0) {
+    error_log("Error: Invalid item name or price");
+    echo json_encode(['success' => false, 'error' => 'Item name and price are required.']);
     exit;
 }
 
@@ -34,9 +41,6 @@ try {
     if (!mysqli_begin_transaction($db)) {
         throw new Exception("Could not start transaction: " . mysqli_error($db));
     }
-    
-    // Get current budget from session
-    #$budget = isset($_SESSION['budget']) ? $_SESSION['budget'] : 500.00;
     
     // Get current total spent from purchases table
     $spent_sql = "SELECT COALESCE(SUM(item_price), 0) as total_spent FROM purchases WHERE user_id = ?";
@@ -55,7 +59,7 @@ try {
     
     $result = mysqli_stmt_get_result($spent_stmt);
     $row = mysqli_fetch_assoc($result);
-    $current_spent = $row['total_spent'];
+    $current_spent = floatval($row['total_spent']);
     $current_remaining = $budget - $current_spent;
     
     error_log("Current budget: " . $budget);
@@ -66,36 +70,52 @@ try {
     // Check if user has enough remaining balance for this purchase
     if ($current_remaining < $price) {
         mysqli_rollback($db);
-        echo json_encode(['error' => 'Insufficient funds. You need $' . $price . ' but only have $' . $current_remaining . ' remaining.']);
+        echo json_encode(['success' => false, 'error' => 'Insufficient funds. You need $' . $price . ' but only have $' . $current_remaining . ' remaining.']);
         exit;
     }
     
-    //Insert budget update
-    /*
-    $budget_sql = "INSERT INTO users (username, budget) VALUES (?, ?, ?)";
-    error_log("SQL: " . $budget_sql);
-    error_log("Values: username=" . $user_id . ", budget=" . $difference);
-    */
+    // Get purchase date and time
+    $purchase_date = $_POST['purchase_date'] ?? date('Y-m-d');
+    $purchase_time = $_POST['purchase_time'] ?? '00:00:00';
+    
+    // Format the datetime properly for MySQL
+    $created_at = $purchase_date;
+    if ($purchase_time) {
+        // Ensure time is in HH:MM:SS format
+        if (strlen($purchase_time) <= 5) { // If only HH:MM is provided
+            $purchase_time .= ':00'; // Add seconds
+        }
+        $created_at .= ' ' . $purchase_time;
+    } else {
+        $created_at .= ' 00:00:00'; // Default to midnight if no time provided
+    }
 
-    // Insert purchase
-    $sql = "INSERT INTO purchases (user_id, item_name, item_price) VALUES (?, ?, ?)";
-    error_log("SQL: " . $sql);
-    error_log("Values: user_id=" . $user_id . ", name=" . $name . ", price=" . $price);
-    
-    $stmt = mysqli_prepare($db, $sql);
-    if (!$stmt) {
-        throw new Exception("Prepare failed: " . mysqli_error($db));
+    // Validate the datetime format
+    if (!strtotime($created_at)) {
+        error_log("Invalid datetime format: " . $created_at);
+        mysqli_rollback($db);
+        echo json_encode(['success' => false, 'error' => 'Invalid date format']);
+        exit;
+    }
+
+    error_log("Attempting to insert purchase with datetime: " . $created_at);
+
+    // Insert the purchase into the database
+    $insert_sql = "INSERT INTO purchases (user_id, item_name, item_price, created_at) VALUES (?, ?, ?, ?)";
+    $insert_stmt = mysqli_prepare($db, $insert_sql);
+    if (!$insert_stmt) {
+        throw new Exception("Prepare failed for insert: " . mysqli_error($db));
     }
     
-    if (!mysqli_stmt_bind_param($stmt, "ssd", $user_id, $name, $price)) {
-        throw new Exception("Bind failed: " . mysqli_stmt_error($stmt));
+    if (!mysqli_stmt_bind_param($insert_stmt, "ssds", $user_id, $name, $price, $created_at)) {
+        throw new Exception("Bind failed for insert: " . mysqli_stmt_error($insert_stmt));
     }
     
-    if (!mysqli_stmt_execute($stmt)) {
-        throw new Exception("Execute failed: " . mysqli_stmt_error($stmt));
+    if (!mysqli_stmt_execute($insert_stmt)) {
+        throw new Exception("Execute failed for insert: " . mysqli_stmt_error($insert_stmt));
     }
     
-    mysqli_stmt_close($stmt);
+    mysqli_stmt_close($insert_stmt);
     
     // Get new total spent after the purchase
     $new_spent_sql = "SELECT COALESCE(SUM(item_price), 0) as total_spent FROM purchases WHERE user_id = ?";
@@ -114,7 +134,7 @@ try {
     
     $result = mysqli_stmt_get_result($new_spent_stmt);
     $row = mysqli_fetch_assoc($result);
-    $new_spent = $row['total_spent'];
+    $new_spent = floatval($row['total_spent']);
     $remaining = $budget - $new_spent;
     
     error_log("New total spent: " . $new_spent);
@@ -167,7 +187,7 @@ try {
     
     error_log("Error in update_history.php: " . $e->getMessage());
     error_log("MySQL Error: " . mysqli_error($db));
-    echo json_encode(['error' => 'An error occurred while processing your purchase. Please try again.']);
+    echo json_encode(['success' => false, 'error' => 'An error occurred while processing your purchase. Please try again.']);
 }
 
 // Close database connection
