@@ -18,43 +18,12 @@ The work for this project was split 50/50
 
 <img width="1470" alt="Screenshot 2025-03-07 at 11 37 08 PM" src="https://github.com/user-attachments/assets/5879ae59-fd49-43c4-8505-22db066df650" />
 
-We used AI for general debugging and help with formatting/styling as well as the CORS functionality
+We used AI for general debugging and help with formatting/styling as well as the CORS functionality. AI was also used with incorporating JavaScript through the https://www.gstatic.com/charts/loader.js source.
 
-Link to the website through: https://wesspend.free.nf/
-
-To load our website locally, first download all files and put them in your htdocs folder.
-Then, setup an sql database named "login". Then in that database, under the SQL tag, copy and past the SQL code at the bottom of this page.
-After the SQL database has been setup, navigate to localhost in a browser, taking you to the login page.
-From the login page, you can create a username and password to log in and will then reach the landing page. There is a navbar on the top, you can click reviews to navigate to the reviews features (i.e. edit, delete, write).
-
-(The start page leads to a demo of our budgeting app)
-
-The mobile version does not have the latest updates made for the project
-For the Mobile react version, run the code with an emulator, we used expo go, running the code npx expo start and navigating through the app on a real mobile device using the navbar at the bottom of the app. The mobile version also uses the localhost through XAAMP to call on our SQL database and tables.
-
-Make sure that you run all of these commands in your terminal to get the app working with Expo:
-
-npm install -g expo-cli
-cd budget
-npm install @react-navigation/native @react-navigation/bottom-tabs react-native-webview @expo/vector-iconsnpx expo install react-native-screens react-native-safe-area-context
-npx expo install react-native-screens react-native-safe-area-context
-
-We hard-coded our IP address in lines: 55, 89, 146, 210, 447, 552, 648, 654 of the App.js file
-(all hard coding now has the adress 10.0.2.2 for android emulator)
-
-Rest API:
-
-The Rest API of our app functions through the Controller/Api, inc, and Model folders as well as the index2.php. The UpdateModel.php file in the Model folder updates the tables we call from our database through the CRUD and login/sign in functionalities. In the Model folder, the Database.php handles all connections with the Database and creates methods for executing SQL queries. In the Controller/Api folder, the BaseController.php deals with error, request, and response handling as well as session management. The UserController.php extends BaseController.php to implement specific endpoints and uses UserModel.php to interact with the database. Within the inc folder, config.php contains the configuration settings for the database and bootstrap.php is for the intialization and setup. Then through the index2.php, the main entry point, we process endpoint calls (i.e. /index2.php/user/list) and then matches them up with certain functions/commands on how the computer should handle these calls accordingly. We have several endpoints such as /user/login and /user/addreview that the App.js uses to call on the REST API.
-
-Running the unit tests:
-
-First make sure that homebrew, phpUnit, composer, and php are installed
-Inside the htdocs folder, create a folder called "test-project" and run "composer init" in this folder following the testing setup (skipping most lines, for define dev dependencies, write phpunit/phpunit). Then, inside the test-project folder, make a folder called "tests". Place the 4 testing php files (testGet_UserList.php, testPost_CreateUser.php, testPost_FailedLogin.php, testPost_LoginUser.php) inside the tests folder. You can run the tests with php vendor/bin/phpunit tests/"name of test php file"
-No repo changes were made from HW3.
-
-Using Gen AI tools can make testing easy, especially given existing code examples. To create the POST request testing files you can copy and paste the GET testing files and ask an AI tool (I used ChatGPT) to create a POST request testing file similar to the GET test for creating a user with username and password fields. The result from ChatGPT is usually very helpful, only needing to change some specific things like links to files, the file name, and deleting a userid field that ChatGPT always puts in conjunction with a username field that we do not use. Once the first POST request testing file is craeted, it is very easy to get the other ones, as it is just changing around the POST request contents and possibly changing the path the request takes.
-
-SQL code:
+**Setup**
+Backend:
+Make sure Apache and MySQL servers are running in XAMPP
+In phpmyadmin (localhost) make sure to run this SQL code:
 
 CREATE TABLE users (
     username VARCHAR(255) PRIMARY KEY,
@@ -166,16 +135,39 @@ CREATE TABLE purchases (
     location VARCHAR(255)
 );
 
+Link to the website through: https://wesspend.free.nf/
 
-ALTER TABLE reviews
-ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP;
+To load our website locally, first download all files and put them in your htdocs folder.
+Then, setup an sql database named "login". Then in that database, under the SQL tag, copy and past the SQL code at the bottom of this page.
+After the SQL database has been setup, navigate to localhost in a browser, taking you to the login page.
+From the login page, you can create a username and password to log in and will then reach the landing page. There is a navbar on the top, you can click reviews to navigate to the reviews features (i.e. edit, delete, write).
 
-ALTER TABLE reviews
-ADD COLUMN review_text TEXT;
+(The start page leads to a demo of our budgeting app)
 
-ALTER TABLE reviews
-ADD COLUMN comment_text TEXT;
+The mobile version does not have the latest updates made for the project
 
-ALTER TABLE users
-ADD COLUMN budget DECIMAL(10, 2);
+Before testing the Mobile version, make sure node.js is installed.
+
+Make sure that you run all of these commands in your terminal to get the app working with Expo (cd into the budget file):
+
+npm install -g expo-cli
+cd budget
+npm install @react-navigation/native @react-navigation/bottom-tabs react-native-webview @expo/vector-iconsnpx expo install react-native-screens react-native-safe-area-context
+npx expo install react-native-screens react-native-safe-area-context
+
+For the Mobile react version, run the code with an emulator in Android Studio. We used expo go, running the code npx expo start and navigating through the app on a real mobile device using the navbar at the bottom of the app. The mobile version also uses the localhost through XAAMP to call on our SQL database and tables. 
+
+We hard-coded our IP address in lines: 55, 89, 146, 210, 447, 552, 648, 654 of the App.js file
+
+Rest API:
+
+The Rest API of our app functions through the Controller/Api, inc, and Model folders as well as the index2.php. The UpdateModel.php file in the Model folder updates the tables we call from our database through the CRUD and login/sign in functionalities. In the Model folder, the Database.php handles all connections with the Database and creates methods for executing SQL queries. In the Controller/Api folder, the BaseController.php deals with error, request, and response handling as well as session management. The UserController.php extends BaseController.php to implement specific endpoints and uses UserModel.php to interact with the database. Within the inc folder, config.php contains the configuration settings for the database and bootstrap.php is for the intialization and setup. Then through the index2.php, the main entry point, we process endpoint calls (i.e. /index2.php/user/list) and then matches them up with certain functions/commands on how the computer should handle these calls accordingly. We have several endpoints such as /user/login and /user/addreview that the App.js uses to call on the REST API.
+
+Running the unit tests:
+
+First make sure that homebrew, phpUnit, composer, and php are installed
+Inside the htdocs folder, create a folder called "test-project" and run "composer init" in this folder following the testing setup (skipping most lines, for define dev dependencies, write phpunit/phpunit). Then, inside the test-project folder, make a folder called "tests". Place the 4 testing php files (testGet_UserList.php, testPost_CreateUser.php, testPost_FailedLogin.php, testPost_LoginUser.php) inside the tests folder. You can run the tests with php vendor/bin/phpunit tests/"name of test php file"
+No repo changes were made from HW3.
+
+Using Gen AI tools can make testing easy, especially given existing code examples. To create the POST request testing files you can copy and paste the GET testing files and ask an AI tool (I used ChatGPT) to create a POST request testing file similar to the GET test for creating a user with username and password fields. The result from ChatGPT is usually very helpful, only needing to change some specific things like links to files, the file name, and deleting a userid field that ChatGPT always puts in conjunction with a username field that we do not use. Once the first POST request testing file is craeted, it is very easy to get the other ones, as it is just changing around the POST request contents and possibly changing the path the request takes.
 
