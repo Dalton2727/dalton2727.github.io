@@ -131,7 +131,7 @@ CREATE TABLE purchases (
     user_id VARCHAR(255),
     item_name VARCHAR(255) NOT NULL,
     item_price DECIMAL(10, 2) NOT NULL,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    created_at DATETIME,
     budget DECIMAL(10, 2)
 );
 
