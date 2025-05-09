@@ -1,3 +1,6 @@
+From the presentation:
+During the presentation the manual altering of the user's budget and amount spent values wasn't working. Some other bugs were happening in the infinity free site that weren't happening on the localhost. Not sure why this is but if some aspects of the site are not functioning as intended it might be helpful to run XAAMP and, through the instructions below, attempt running the files on the localhost to double-check they function as intended.
+
 Created by Tara Pandey and Dalton Soper. 
 
 This is a website created for an assignment for Comp 333, a Software Engineering course at Wesleyan University. 
