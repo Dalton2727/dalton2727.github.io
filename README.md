@@ -1,5 +1,8 @@
 From the presentation:
+
 During the presentation the manual altering of the user's budget and amount spent values wasn't working. Some other bugs were happening in the infinity free site that weren't happening on the localhost. Not sure why this is but if some aspects of the site are not functioning as intended it might be helpful to run XAAMP and, through the instructions below, attempt running the files on the localhost to double-check they function as intended.
+
+Additionally, during the presentation we did not show the mobile side of the app which was run and tested through Android Studio (instructions below). For the final project we did not update functionality for the mobile function. As some of our SQL calls/tables were changed, this caused problems with using the version of the mobile app from homework 3. If you would still like to see the mobile app functionality, please refer to the SQL calls in the ReadMe up to issue "add comments #177" or the date April 11th. A few bug fixes were present in this version of the app that were later fixed in issues: fix mobile edit issues #181 and Bug Fix #183 (using the old SQL calls present in the ReadMe as far as April 11th). 
 
 Created by Tara Pandey and Dalton Soper. 
 
