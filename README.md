@@ -1,18 +1,16 @@
-From the presentation:
+Screenshots of website:
 
-During the presentation the manual altering of the user's budget and amount spent values wasn't working. Some other bugs were happening in the infinity free site that weren't happening on the localhost. Not sure why this is but if some aspects of the site are not functioning as intended it might be helpful to run XAAMP and, through the instructions below, attempt running the files on the localhost to double-check they function as intended.
-
-Additionally, during the presentation we did not show the mobile side of the app which was run and tested through Android Studio (instructions below). For the final project we did not update functionality for the mobile function. As some of our SQL calls/tables were changed, this caused problems with using the version of the mobile app from homework 3. If you would still like to see the mobile app functionality, please refer to the SQL calls in the ReadMe up to issue "add comments #177" or the date April 11th. A few bug fixes were present in this version of the app that were later fixed in issues: fix mobile edit issues #181 and Bug Fix #183 (using the old SQL calls present in the ReadMe as far as April 11th). 
+<img width="1470" height="837" alt="image" src="https://github.com/user-attachments/assets/51744844-0081-4d2e-8931-e7f5405797be" />
+<img width="1470" height="837" alt="image" src="https://github.com/user-attachments/assets/c348b4c8-17cb-4929-88ee-95fd016ee8d3" />
+<img width="1470" height="837" alt="image" src="https://github.com/user-attachments/assets/1f68f80c-c9ad-4522-9910-599a874e958d" />
+<img width="1470" height="837" alt="image" src="https://github.com/user-attachments/assets/9857f666-5249-42be-872b-8c32b7b52e7f" />
+<img width="1470" height="837" alt="image" src="https://github.com/user-attachments/assets/6d392ca4-3c36-467e-884d-9b3375a199fd" />
 
 Created by Tara Pandey and Dalton Soper. 
-
-This is a website created for an assignment for Comp 333, a Software Engineering course at Wesleyan University. 
 
 Our app is designed to be an online budgeting system, where students can track the meal points they have spent and how that fits into their monthly budget. 
 
 When you log into the app, you are taken to our budgeting demo. From there you can navigate around the app with the navbar. Certain pages in the navbar are only available if you are on a related page (such as the reviews, edit reviews, write reviews, comments and ratings page). We created a social component for the app with our ratings page which allows the user to see public data as well as their own. Our CRUD functionality is mostly through our reviews page, the user can write/edit/delete their own reviews and interact with reviews through comments. 
-
-The work for this project was split 50/50
 
 <img width="1085" alt="image" src="https://github.com/user-attachments/assets/192a395f-5754-4314-9a64-40ea8d5566d1" />
 <img width="908" alt="image" src="https://github.com/user-attachments/assets/999d6370-21d7-4070-9734-371e55677c89" />
@@ -140,13 +138,6 @@ CREATE TABLE purchases (
     item_price DECIMAL(10, 2) NOT NULL,
     location VARCHAR(255)
 );
-
-Link to the website through: https://wesspend.free.nf/
-
-To load our website locally, first download all files and put them in your htdocs folder.
-Then, setup an sql database named "login". Then in that database, under the SQL tag, copy and past the SQL code at the bottom of this page.
-After the SQL database has been setup, navigate to localhost in a browser, taking you to the login page.
-From the login page, you can create a username and password to log in and will then reach the landing page. There is a navbar on the top, you can click reviews to navigate to the reviews features (i.e. edit, delete, write).
 
 (The start page leads to a demo of our budgeting app)
 
